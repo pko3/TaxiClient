@@ -67,7 +67,6 @@ var OrderView = function (messages) {
                 this.order.step = "fSpecialConditions";
                 break;
             case "fSpecialConditions":
-            case "fOrderSave":
                 this.order.step = "fOrderSave";
                 $("#orderSave").hide();
                 $("#orderBack").hide();
@@ -76,20 +75,21 @@ var OrderView = function (messages) {
                 //app.waiting();
                 var d = $("#orderForm-form").serializeArray();
                 $.each(d, function (i, v) { self.order[v.name] = v.value; });
-                
+
                 Service.sendOrder(this.order, function (data) {
-                    data.step = "fOrderOk";
-                    self.save();
+                    self.order.step = "fOrderOk";
+                    $("#orderForm fieldset").hide();
+                    $("#" + (self.order.step)).show();
+                    $("#orderWaiting").hide();
+                    $("#orderBack").show();
+                }, function (data) {
+                    self.order.step = "fOrderError";
+                    $("#orderForm fieldset").hide();
+                    $("#" + (self.order.step)).show();
+                    $("#orderWaiting").hide();
+                    $("#orderBack").show();
+                    $("#orderSave").show();
                 });
-                break;
-            case "fOrderOk":
-                $("#orderWaiting").hide();
-                $("#orderBack").show();
-                break;
-            case "fOrderError":
-                $("#orderWaiting").hide();
-                $("#orderBack").show();
-                $("#orderSave").show();
                 break;
             default://fTaxiCompany
                 this.order.step = "fTaxiCompany";
@@ -98,17 +98,10 @@ var OrderView = function (messages) {
 
         $("#orderForm fieldset").hide();
         $("#" + (this.order.step)).show();
-    };
+     };
     this.loadForm = function () {
         var self = this;
-        var s = Service.getSettings();
         this.order = Service.getOrders().Current;
-        this.order.OrderToDate = this.order.OrderToDate || new Date();
-        if (this.order.OrderToDate)
-            this.order.FormatedOrderToDate = Service.formatDate(this.order.OrderToDate);
-        
-        this.order.CustomerPhone = s.clientPhone;
-
         self.showForm();
     };
     this.showForm = function () {

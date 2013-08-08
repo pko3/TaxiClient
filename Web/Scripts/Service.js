@@ -19,6 +19,7 @@
     },
     initialize: function (callback) {
         app.log("Service.initialize");
+        
         //Cross domain !!!
         $.support.cors = true;
         $.ajaxSetup({
@@ -33,6 +34,8 @@
             }
         });
         
+        this.getSettings();
+
         if (window.device)
             this._settings.sessionId = window.device.platform + "_" + window.device.uuid;
         else
@@ -66,12 +69,30 @@
                    callback();
             });
     },
-    newOrder: function (order) {
-        order = order || {};
+    newOrder: function (id) {
+        var order = this.findOrder(id) || {};
         order.IsNew = true;
+        order.localId = "o_" + this.getUid();
+        order.step = "";
         order.Status = "New";//"Offered""Reserved""Waiting""Processing""Complete""Cancel"
+        order.ErrorMessage = "";
+        order.OrderToDate = Service.formatDate(new Date());
+        if (this._settings.userPhone)
+            order.CustomerPhone = this._settings.userPhone;
+
         this.getOrders().Current = order;
         app.route("order");
+    },
+    removeOrder: function(id){
+        var o = this.getOrders();
+        o.Items = $.grep(this.getOrders().Items, function (o) { return o.localId && o.localId != id; })
+        this.saveOrders();
+    },
+    findOrder: function(id){
+        var r = $.grep(this.getOrders().Items, function (o) { return o.localId == id; });
+        if (r.length > 0)
+            return r[0];
+        return undefined;
     },
     sendOrder: function (order, callback, errCalback) {
         if (order.IsNew)
@@ -81,11 +102,12 @@
             this.saveOrders();
         }
 
-        if (order.CustomerPhone)
+        if (order.CustomerPhone && this._settings.userPhone != order.CustomerPhone) {
             this._settings.userPhone = order.CustomerPhone;
+            this.saveSettings();
+        }
 
-        if (callback)
-            setTimeout(function () { callback(order); }, 2000);
+        Service.callService("order", order, callback, errCalback);
     },
     getOrders: function () {
         if (!this._orders)
@@ -105,7 +127,7 @@
         this.callService("itemmobile", { Id: entity + "_" + id }, callback, callback);
     },
     getSettings: function () {
-        if (!Service._settings || !Service._settings.url) {
+        if (!Service._settings || !Service._settings.sessionId) {
             var s = window.localStorage.getItem("settings");
             if(s)
                 Service._settings = JSON.parse(s);
@@ -199,5 +221,8 @@
         if (d)
             return d.getDate() + ". " + d.getMonth() + ". " + d.getFullYear() + " " + d.toTimeString().substring(0, 5);
         return "";
+    },
+    getUid: function () {
+        return Math.random().toString(16).replace(".", "") + (new Date()).valueOf().toString(16);
     }
 }

@@ -26,9 +26,9 @@
 
 <script id="orders-li-tpl" type="text/x-handlebars-template">
 {{#.}}
-<div id="{{this.GUID}}" class="{{this.Status}}" data_GUID_Offer="{{this.GUID_Offer}}" data_StatusOffer="{{this.StatusOffer}}" data_Id="{{this.GUID}}" data_Status="{{this.Status}}">
+<div id="{{this.GUID}}" class="{{this.Status}}" data_GUID_Offer="{{this.GUID_Offer}}" data_StatusOffer="{{this.StatusOffer}}" data_Id="{{this.GUID}}" data_localId="{{this.localId}}"  data_Status="{{this.Status}}">
 <div class="icon down">&nbsp;</div>
-    <div class="content"><strong>{{this.FormatedDate}}</strong> {{this.StartCity}} {{this.StartAddress}}<br/>{{this.EndCity}} {{this.EndAddress}}<br/>{{this.Persons}} {{this.SpecialConditions}}</div>
+    <div class="content"><strong>{{this.OrderToDate}}</strong> {{this.StartCity}} {{this.StartAddress}}<br/>{{this.EndCity}} {{this.EndAddress}}<br/>{{this.Persons}} {{this.SpecialConditions}}</div>
 <div class="icon up">&nbsp;</div></div>
 {{/.}}
 </script>
@@ -64,7 +64,7 @@
     <legend>Odkiaľ</legend>
       <div>
         <label for="OrderToDate">Dátum a čas</label>
-        <input id="OrderToDate" readonly="true" name="OrderToDate" type="datetime" value="{{this.FormatedOrderToDate}}" />
+        <input id="OrderToDate" readonly="true" name="OrderToDate" type="datetime" value="{{this.OrderToDate}}" />
     </div>
     <div>
         <label for="StartCity">Mesto</label>

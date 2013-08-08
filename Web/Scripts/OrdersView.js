@@ -17,10 +17,10 @@
         var orders = Service.getOrders();
 
         if (orders && orders.Items) {
-            $.each(orders.Items, function () {
-                this.FormatedDate = Service.formatJsonDate(this.Date);
-                $('.orders-list').html(OrdersView.liTemplate(orders.Items));
-            });
+            //$.each(orders.Items, function () {
+            //this.FormatedDate = Service.formatDate(this.Date);
+            //});
+            $('.orders-list').html(OrdersView.liTemplate(orders.Items));
         }
         if (self.iscroll)
             self.iscroll.refresh();
@@ -36,23 +36,41 @@
     };
     this.changeOffer = function (btn, action) {
         var settings = Service.getSettings(), self = this;
-        var data = {
-            Action: action,
-            IsTransporter: true,
-            GUID_Transporter: settings.transporterId,
-            Status_Transporter: settings.transporterState,
-            GUID: btn.attr("data_GUID_Offer"),
-            Status: btn.attr("data_StatusOffer"),
-            GUID_TransporterOrder: btn.attr("data_Id"),
-            Status_TransporterOrder: btn.attr("data_Status"),
-            Latitude: PositionService.lat,
-            Longitude: PositionService.lng
-        };
-        btn.removeClass().addClass("refWaiting");
+        if (action == "Up") {
+            switch (btn.attr("data_Status")) //"New""Offered""Reserved""Waiting""Processing""Complete""Cancel"
+            {
+                default:
+                    Service.newOrder(btn.attr("data_localId"))
+                    break;
+            }
+        }
+        else {
+            switch (btn.attr("data_Status")) //"New""Offered""Reserved""Waiting""Processing""Complete""Cancel"
+            {
+                default:
+                    Service.removeOrder(btn.attr("data_localId"))
+                    break;
+            }
+        }
 
-        data.Latitude = PositionService.lat,
-        data.Longitude = PositionService.lng
-        Service.callService("transporteroffer", data);
+        this.loadData();
+        //var data = {
+        //    Action: action,
+        //    IsTransporter: true,
+        //    GUID_Transporter: settings.transporterId,
+        //    Status_Transporter: settings.transporterState,
+        //    GUID: btn.attr("data_GUID_Offer"),
+        //    Status: btn.attr("data_StatusOffer"),
+        //    GUID_TransporterOrder: btn.attr("data_Id"),
+        //    Status_TransporterOrder: btn.attr("data_Status"),
+        //    Latitude: PositionService.lat,
+        //    Longitude: PositionService.lng
+        //};
+        //btn.removeClass().addClass("refWaiting");
+
+        //data.Latitude = PositionService.lat,
+        //data.Longitude = PositionService.lng
+        //Service.callService("transporteroffer", data);
     };
     this.onShow = function () {
         if (!navigator.app)
