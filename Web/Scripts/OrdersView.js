@@ -17,9 +17,10 @@
         var orders = Service.getOrders();
 
         if (orders && orders.Items) {
-            //$.each(orders.Items, function () {
-            //this.FormatedDate = Service.formatDate(this.Date);
-            //});
+            orders.Items.sort(function (a, b) { return a.OrderToDate - b.OrderToDate });
+            $.each(orders.Items, function () {
+                this.FormatedDate = Service.formatDate(this.OrderToDate);
+            });
             $('.orders-list').html(OrdersView.liTemplate(orders.Items));
         }
         if (self.iscroll)
@@ -37,40 +38,11 @@
     this.changeOffer = function (btn, action) {
         var settings = Service.getSettings(), self = this;
         if (action == "Up") {
-            switch (btn.attr("data_Status")) //"New""Offered""Reserved""Waiting""Processing""Complete""Cancel"
-            {
-                default:
-                    Service.newOrder(btn.attr("data_localId"))
-                    break;
-            }
+            Service.newOrder(btn.attr("data_localId"));
         }
         else {
-            switch (btn.attr("data_Status")) //"New""Offered""Reserved""Waiting""Processing""Complete""Cancel"
-            {
-                default:
-                    Service.removeOrder(btn.attr("data_localId"))
-                    break;
-            }
+            Service.removeOrder(btn.attr("data_localId"), function () { self.loadData(); })
         }
-
-        this.loadData();
-        //var data = {
-        //    Action: action,
-        //    IsTransporter: true,
-        //    GUID_Transporter: settings.transporterId,
-        //    Status_Transporter: settings.transporterState,
-        //    GUID: btn.attr("data_GUID_Offer"),
-        //    Status: btn.attr("data_StatusOffer"),
-        //    GUID_TransporterOrder: btn.attr("data_Id"),
-        //    Status_TransporterOrder: btn.attr("data_Status"),
-        //    Latitude: PositionService.lat,
-        //    Longitude: PositionService.lng
-        //};
-        //btn.removeClass().addClass("refWaiting");
-
-        //data.Latitude = PositionService.lat,
-        //data.Longitude = PositionService.lng
-        //Service.callService("transporteroffer", data);
     };
     this.onShow = function () {
         if (!navigator.app)

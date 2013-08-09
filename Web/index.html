@@ -28,7 +28,7 @@
 {{#.}}
 <div id="{{this.GUID}}" class="{{this.Status}}" data_GUID_Offer="{{this.GUID_Offer}}" data_StatusOffer="{{this.StatusOffer}}" data_Id="{{this.GUID}}" data_localId="{{this.localId}}"  data_Status="{{this.Status}}">
 <div class="icon down">&nbsp;</div>
-    <div class="content"><strong>{{this.OrderToDate}}</strong> {{this.StartCity}} {{this.StartAddress}}<br/>{{this.EndCity}} {{this.EndAddress}}<br/>{{this.Persons}} {{this.SpecialConditions}}</div>
+    <div class="content"><strong>{{this.FormatedDate}}</strong> {{this.StartCity}} {{this.StartAddress}}<br/>{{this.EndCity}} {{this.EndAddress}}<br/>{{this.Persons}} {{this.SpecialConditions}}</div>
 <div class="icon up">&nbsp;</div></div>
 {{/.}}
 </script>
@@ -42,17 +42,29 @@
 <form id="orderForm-form">
     <fieldset id="fTaxiCompany">
     <legend>Taxislužba</legend>
-    <div>
+    <!--<div>
         <label for="StartCity">Mesto</label>
         <select name="TaxiCity" id="TaxiCity">
             {{#each this.TaxiCities}}
             <option value="{{Id}}" {{#if selected}}selected="selected"{{/if}}>{{TaxiCity}}</option>
             {{/each}}
         </select>
-    </div>
+    </div>-->
     <div>
-        <label for="StartCity">Taxislužba</label>
-    <select name="TaxiCompany" id="TaxiCompany">
+        <!--<label for="StartCity">Taxislužba</label>-->
+    <select name="TaxiCompany" size="30" style="height:250px;" id="TaxiCompany">
+        <option value="aTaxi" >aTaxi</option>
+        <option value="aTaxi" >aTaxi</option>
+        <option value="aTaxi" >aTaxi</option>
+        <option value="aTaxi" >aTaxi</option>
+        <option value="aTaxi" >aTaxi</option>
+        <option value="aTaxi" >aTaxi</option>
+        <option value="aTaxi" >aTaxi</option>
+        <option value="aTaxi" >aTaxi</option>
+        <option value="aTaxi" >aTaxi</option>
+        <option value="aTaxi" >aTaxi</option>
+        <option value="aTaxi" >aTaxi</option>
+        <option value="aTaxi" >aTaxi</option>
         {{#each this.TaxiCompanies}}
          <option value="{{Id}}" {{#if selected}}selected="selected"{{/if}}>{{TaxiCompany}}</option>
         {{/each}}
@@ -64,7 +76,7 @@
     <legend>Odkiaľ</legend>
       <div>
         <label for="OrderToDate">Dátum a čas</label>
-        <input id="OrderToDate" readonly="true" name="OrderToDate" type="datetime" value="{{this.OrderToDate}}" />
+        <input id="OrderToDate" name="OrderToDate" type="datetime-local" value="{{this.OrderToDate}}" />
     </div>
     <div>
         <label for="StartCity">Mesto</label>
@@ -117,12 +129,12 @@
 </fieldset>    
         <fieldset id="fOrderError">
       <legend>Požiadavka nebola schválená</legend>
-      <div>
+      <div id="fOrderErrorOutput" class="error">
     </div>
 </fieldset>    
     <input id="Status" name="Status" type="hidden" value="{{this.Status}}" />
     
-    {{#if this.ErrorMessage}}<div class="error">{{this.ErrorMessage}}</div>{{/if}}
+ <div id="OrderFormError" class="error">{{this.ErrorMessage}}</div>
 </form>
 </script>
 

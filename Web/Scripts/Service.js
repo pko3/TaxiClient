@@ -42,6 +42,8 @@
             this._settings.sessionId = "";
 
         //this.login(callback);
+
+        PositionService.startWatch();
         if (callback)
             callback();
     },
@@ -50,43 +52,76 @@
         this.getSettings();
         Service.isAuthenticated = false;
         this.callService("login", { UserName: this._settings.name, Password: this._settings.password, RememberMe: true, TransporterId: this._settings.transporterId }, function (d) {
-               Service.isAuthenticated = true;
-               var s = Service.getSettings();
-               s.userId = d.userId;
-               s.sessionId = d.sessionId;
-               Service.saveSettings(s);
-               PositionService.startWatch();
-               if (callback) callback();
+            Service.isAuthenticated = true;
+            var s = Service.getSettings();
+            s.userId = d.userId;
+            s.sessionId = d.sessionId;
+            Service.saveSettings(s);
+            PositionService.startWatch();
+            if (callback) callback();
 
-            }, function (d) {
-                //PositionService.stopWatch();
-                if (d.ErrorMessage)
-                    Service.connectionError = d.ErrorMessage;
-                else
-                    Service.connectionError = "Chybné prihlásenie";
-               Service.isAuthenticated = false;
-               if (callback)
-                   callback();
-            });
+        }, function (d) {
+            //PositionService.stopWatch();
+            if (d.ErrorMessage)
+                Service.connectionError = d.ErrorMessage;
+            else
+                Service.connectionError = "Chybné prihlásenie";
+            Service.isAuthenticated = false;
+            if (callback)
+                callback();
+        });
     },
     newOrder: function (id) {
-        var order = this.findOrder(id) || {};
-        order.IsNew = true;
+        var order = this.findOrder(id);
+        if (order) {
+            if (this.isOrderInProcess(order)) {
+                order = $.extend({}, order);
+                order.IsNew = true;
+            }
+            else
+                order.IsNew = false;
+            
+        }
+        else {
+            order = {};
+            order.IsNew = true;
+        }
+        
         order.localId = "o_" + this.getUid();
         order.step = "";
-        order.Status = "New";//"Offered""Reserved""Waiting""Processing""Complete""Cancel"
+        //"Offered""Reserved""Waiting""Processing""Complete""Cancel"
         order.ErrorMessage = "";
-        order.OrderToDate = Service.formatDate(new Date());
+        order.OrderToDate = Service.formatLocalIsoDate(new Date());
         if (this._settings.userPhone)
             order.CustomerPhone = this._settings.userPhone;
 
         this.getOrders().Current = order;
         app.route("order");
     },
-    removeOrder: function(id){
-        var o = this.getOrders();
-        o.Items = $.grep(this.getOrders().Items, function (o) { return o.localId && o.localId != id; })
-        this.saveOrders();
+    isOrderInProcess: function(order){
+        return order && order.Status && (order.Status == "New" || order.Status == "Offered" || order.Status == "Reserved" || order.Status == "Waiting" || order.Status == "Processing");
+    },
+    removeOrder: function (id, callback) {
+        var order = this.findOrder(id);
+        if (order) {
+
+            if (order.Status != "")
+                app.showConfirm("Chcete zrušiť objednávku?","Objednávka", function () {
+                    //CANCEL
+                    callback();
+                });
+            else {
+                app.showConfirm("Zmazať z histórie?", "Objednávka", function () {
+                    var o = this.getOrders();
+                    o.Items = $.grep(this.getOrders().Items, function (o) { return o.localId && o.localId != id; })
+                    this.saveOrders();
+                    callback();
+                });
+                
+            }
+        }
+        else
+            callback();
     },
     findOrder: function(id){
         var r = $.grep(this.getOrders().Items, function (o) { return o.localId == id; });
@@ -107,7 +142,17 @@
             this.saveSettings();
         }
 
-        Service.callService("order", order, callback, errCalback);
+        order.Status = "New";
+        Service.callService("order", order, function (d) {
+            Service.saveOrders();
+            callback(d);
+        }, function (d) {
+            order.Status = "";
+            Service.saveOrders();
+            errCalback(d);
+        });
+
+
     },
     getOrders: function () {
         if (!this._orders)
@@ -129,8 +174,12 @@
     getSettings: function () {
         if (!Service._settings || !Service._settings.sessionId) {
             var s = window.localStorage.getItem("settings");
-            if(s)
-                Service._settings = JSON.parse(s);
+            if (s) {
+                if (Service._settings)
+                    Service._settings = $.extend(Service._settings, JSON.parse(s));
+                else
+                    Service._settings = JSON.parse(s);
+            }
             else
                 Service._settings = {};
         }
@@ -146,8 +195,10 @@
         Service.connectionError = null;
         if (!this._settings.url) {
             Service.connectionError = "Chýba adresa servisu";
+            if (data)
+                data.ErrorMessage = Service.connectionError;
             if (errorDelegate)
-                errorDelegate(d);
+                errorDelegate(data);
         }
         else {
             if (data) {
@@ -213,13 +264,42 @@
     formatJsonDate: function (jsonDate) {
         var d = Service.parseJsonDate(jsonDate);
         //return d.toLocaleDateString() + " <br/><strong>" + d.toLocaleTimeString().substring(0, 5) + "</strong>"; //
+        return this.formatDate(d)
+            
+    },
+    formatDate: function (d) {
+        if (!d)
+            return "";
+        if (d.constructor === String)
+            d = new Date(d);
         if (d)
             return d.getDate() + ". " + d.getMonth() + ". " + d.getFullYear() + " " + d.toTimeString().substring(0, 5);
         return "";
     },
-    formatDate: function (d) {
+    formatLocalIsoDate: function (d) {
+
+        function pad(number) {
+            var r = String(number);
+            if (r.length === 1) {
+                r = '0' + r;
+            }
+            return r;
+        }
+
         if (d)
-            return d.getDate() + ". " + d.getMonth() + ". " + d.getFullYear() + " " + d.toTimeString().substring(0, 5);
+        return d.getFullYear()
+              + '-' + pad(d.getMonth() + 1)
+              + '-' + pad(d.getDate())
+              + 'T' + pad(d.getHours())
+              + ':' + pad(d.getMinutes());
+              //+ ':' + pad(d.getUTCSeconds())
+              //+ '.' + String((d.getUTCMilliseconds() / 1000).toFixed(3)).slice(2, 5)
+              //+ 'Z';
+        
+
+        //if (d)
+        //    return d.toISOString().substr(0,16);
+        
         return "";
     },
     getUid: function () {

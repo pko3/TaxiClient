@@ -1,4 +1,4 @@
-var OrderView = function (messages) {
+﻿var OrderView = function (messages) {
     this.index = 5;
     this.order = {};
     this.initialize = function() {
@@ -53,17 +53,30 @@ var OrderView = function (messages) {
     };
     this.save = function () {
         var self = this;
+        $("#OrderFormError").empty();
         switch (this.order.step) {
             case "fTaxiCompany":
+                if (!$("#TaxiCompany").val()) {
+                    $("#OrderFormError").html("Vyberte taxislužbu");
+                    return;
+                }
                 this.order.step = "fStartAddress";
                 break;
             case "fStartAddress":
+                if (!$("#StartCity").val() || !$("#StartAddress").val()) {
+                    $("#OrderFormError").html("Zadajte kompletnú adresu");
+                    return;
+                }
                 this.order.step = "fEndAddress";
                 break;
             case "fEndAddress":
                 this.order.step = "fCustomerPhone";
                 break;
             case "fCustomerPhone":
+                if (!$("#CustomerPhone").val()) {
+                    $("#OrderFormError").html("Zadajte Váš telefón");
+                    return;
+                }
                 this.order.step = "fSpecialConditions";
                 break;
             case "fSpecialConditions":
@@ -71,6 +84,8 @@ var OrderView = function (messages) {
                 $("#orderSave").hide();
                 $("#orderBack").hide();
                 $("#orderWaiting").show();
+                $("#orderForm fieldset").hide();
+                $("#" + (this.order.step)).show();
                 //$("#orderForm").hide();
                 //app.waiting();
                 var d = $("#orderForm-form").serializeArray();
@@ -83,13 +98,15 @@ var OrderView = function (messages) {
                     $("#orderWaiting").hide();
                     $("#orderBack").show();
                 }, function (data) {
+                    $("#fOrderErrorOutput").html(data.ErrorMessage);
                     self.order.step = "fOrderError";
                     $("#orderForm fieldset").hide();
                     $("#" + (self.order.step)).show();
                     $("#orderWaiting").hide();
                     $("#orderBack").show();
-                    $("#orderSave").show();
+                    //$("#orderSave").show();
                 });
+                return;
                 break;
             default://fTaxiCompany
                 this.order.step = "fTaxiCompany";
@@ -105,9 +122,7 @@ var OrderView = function (messages) {
         self.showForm();
     };
     this.showForm = function () {
-        this.order.ErrorMessage = Service.connectionError;
             app.waiting(false);
-
             this.order.step = this.order.step || "fTaxiCompany";
             $("#orderForm").html(OrderView.templateForm(this.order));
             $("#orderWaiting").hide();
