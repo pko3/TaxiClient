@@ -44,11 +44,9 @@
             PositionService.callService();
     },
     callService: function () {
-        if (Service.waitingOffer()) {
+        var list_IdOrder = Service.waitingOffers();
+        if (list_IdOrder) {
             try {
-                //app.info("Posielam ...");
-                var s = Service.getSettings();
-
                 var posChanged = PositionService._lat != PositionService.lat && PositionService._lng != PositionService.lng;
                 if (posChanged) {
                     PositionService._lat = PositionService.lat;
@@ -56,7 +54,9 @@
                 }
 
                 Service.callService("pool", {
-                    Id: s.sessionId,
+                    //ordersdetailforphone @list_IdOrder, oddelene znakom ||
+                    List_IdOrder: list_IdOrder,
+                    Id: Service.settings.sessionId,
                     Lat: posChanged ? PositionService.lat : 0,
                     Lng: posChanged ? PositionService.lng : 0,
                 },
@@ -72,9 +72,14 @@
             PositionService.startPool();
     },
     refreshVersionData: function (d) {
-        if (d.oVer && d.oVer != Service.ordersVer) {
-            Service.ordersVer = d.oVer;
-            app.playNew();
+        if (d.Items) {
+            var play = false;
+            $.each(d.Items, function () {
+                play |= Service.updateOrder(this);
+            });
+            if(play)
+                app.playNew();
+
             app.refreshData(["orders"]);
         }
     }

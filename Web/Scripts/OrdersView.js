@@ -14,11 +14,13 @@
 
         $('.orders-list').hide();
         app.waiting();
-        var orders = Service.getOrders();
+        var orders = Service.orders;
 
         if (orders && orders.Items) {
             orders.Items.sort(function (a, b) { return a.OrderToDate - b.OrderToDate });
             $.each(orders.Items, function () {
+                if (!this.GUID)
+                    this.Status = "";
                 this.FormatedDate = Service.formatDate(this.OrderToDate);
             });
             $('.orders-list').html(OrdersView.liTemplate(orders.Items));
@@ -36,7 +38,7 @@
         $('.orders-list').show();
     };
     this.changeOffer = function (btn, action) {
-        var settings = Service.getSettings(), self = this;
+        var self = this;
         if (action == "Up") {
             Service.newOrder(btn.attr("data_localId"));
         }

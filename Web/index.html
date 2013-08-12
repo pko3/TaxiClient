@@ -42,31 +42,11 @@
 <form id="orderForm-form">
     <fieldset id="fTaxiCompany">
     <legend>Taxislužba</legend>
-    <!--<div>
-        <label for="StartCity">Mesto</label>
-        <select name="TaxiCity" id="TaxiCity">
-            {{#each this.TaxiCities}}
-            <option value="{{Id}}" {{#if selected}}selected="selected"{{/if}}>{{TaxiCity}}</option>
-            {{/each}}
-        </select>
-    </div>-->
     <div>
         <!--<label for="StartCity">Taxislužba</label>-->
     <select name="TaxiCompany" size="30" style="height:250px;" id="TaxiCompany">
-        <option value="aTaxi" >aTaxi</option>
-        <option value="aTaxi" >aTaxi</option>
-        <option value="aTaxi" >aTaxi</option>
-        <option value="aTaxi" >aTaxi</option>
-        <option value="aTaxi" >aTaxi</option>
-        <option value="aTaxi" >aTaxi</option>
-        <option value="aTaxi" >aTaxi</option>
-        <option value="aTaxi" >aTaxi</option>
-        <option value="aTaxi" >aTaxi</option>
-        <option value="aTaxi" >aTaxi</option>
-        <option value="aTaxi" >aTaxi</option>
-        <option value="aTaxi" >aTaxi</option>
-        {{#each this.TaxiCompanies}}
-         <option value="{{Id}}" {{#if selected}}selected="selected"{{/if}}>{{TaxiCompany}}</option>
+        {{#each this.companiesItems}}
+         <option value="{{GUID_sysCompany}}" {{#if selected}}selected="selected"{{/if}}>{{Title}} - {{Town}}</option>
         {{/each}}
     </select>
     </div>

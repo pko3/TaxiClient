@@ -90,6 +90,8 @@
                 //app.waiting();
                 var d = $("#orderForm-form").serializeArray();
                 $.each(d, function (i, v) { self.order[v.name] = v.value; });
+                $.each(Service.companies.Items, function () { this.selected = this.GUID_sysCompany == self.order.TaxiCompany; });
+                Service.saveCompanies();
 
                 Service.sendOrder(this.order, function (data) {
                     self.order.step = "fOrderOk";
@@ -118,12 +120,13 @@
      };
     this.loadForm = function () {
         var self = this;
-        this.order = Service.getOrders().Current;
+        this.order = Service.orders.Current;
         self.showForm();
     };
     this.showForm = function () {
             app.waiting(false);
             this.order.step = this.order.step || "fTaxiCompany";
+            this.order.companiesItems = Service.companies.Items;
             $("#orderForm").html(OrderView.templateForm(this.order));
             $("#orderWaiting").hide();
             $("#orderForm fieldset").hide();

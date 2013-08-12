@@ -4,12 +4,10 @@
     transporterVer: undefined,
     transporter: null,
     isSendloginHistory: false,
-    waitingOffer: function () {
-        return false;
-    },
     connectionError: undefined,
-    _orders: undefined,
-    _settings: {
+    orders: undefined,
+    companies: undefined,
+    settings: {
         userId: undefined,
         userPhone: undefined,
         transporterId: undefined,
@@ -29,17 +27,19 @@
                 switch (jqXHR.status) {
                     case 403: Service.connectionError = "Chybné prihlásenie"; break;
                     case 404: Service.connectionError = "Služba sa nenašla: " + this.url; break;
-                    default: Service.connectionError = "Služba sa nenašla: " + this.url; break;
+                    default: Service.connectionError = errorThrown; break;
                 }
             }
         });
         
         this.getSettings();
+        this.getOrders();
+        this.getCompanies();
 
         if (window.device)
-            this._settings.sessionId = window.device.platform + "_" + window.device.uuid;
+            this.settings.sessionId = window.device.platform + "_" + window.device.uuid;
         else
-            this._settings.sessionId = "";
+            this.settings.sessionId = "";
 
         //this.login(callback);
 
@@ -47,16 +47,22 @@
         if (callback)
             callback();
     },
+    waitingOffers: function () {
+        var ret = "", self = this;
+        $.each(this.orders.Items, function () {
+            if (this.GUID && self.isOrderInProcess(this))
+                ret += this.GUID + "||";
+        });
+        return ret;
+    },
     login: function (callback) {
         app.log("Service.login");
-        this.getSettings();
         Service.isAuthenticated = false;
-        this.callService("login", { UserName: this._settings.name, Password: this._settings.password, RememberMe: true, TransporterId: this._settings.transporterId }, function (d) {
+        this.callService("login", { UserName: this.settings.name, Password: this.settings.password, RememberMe: true, TransporterId: this.settings.transporterId }, function (d) {
             Service.isAuthenticated = true;
-            var s = Service.getSettings();
-            s.userId = d.userId;
-            s.sessionId = d.sessionId;
-            Service.saveSettings(s);
+            Service.settings.userId = d.userId;
+            Service.settings.sessionId = d.sessionId;
+            Service.saveSettings();
             PositionService.startWatch();
             if (callback) callback();
 
@@ -86,64 +92,76 @@
             order = {};
             order.IsNew = true;
         }
-        
+        order.OrderSource = "Phone";
         order.localId = "o_" + this.getUid();
         order.step = "";
         //"Offered""Reserved""Waiting""Processing""Complete""Cancel"
         order.ErrorMessage = "";
         order.OrderToDate = Service.formatLocalIsoDate(new Date());
-        if (this._settings.userPhone)
-            order.CustomerPhone = this._settings.userPhone;
+        if (this.settings.userPhone)
+            order.CustomerPhone = this.settings.userPhone;
 
-        this.getOrders().Current = order;
+        this.orders.Current = order;
         app.route("order");
     },
     isOrderInProcess: function(order){
-        return order && order.Status && (order.Status == "New" || order.Status == "Offered" || order.Status == "Reserved" || order.Status == "Waiting" || order.Status == "Processing");
+        return order && order.Status && (order.Status == "New" || order.Status == "Offered" || order.Status == "Reserved" || order.Status == "Waiting");
     },
     removeOrder: function (id, callback) {
-        var order = this.findOrder(id);
+        var order = this.findOrder(id), self = this;
         if (order) {
-
-            if (order.Status != "")
+            if (order.Status != "" && order.GUID)
                 app.showConfirm("Chcete zrušiť objednávku?","Objednávka", function () {
                     //CANCEL
                     callback();
                 });
             else {
                 app.showConfirm("Zmazať z histórie?", "Objednávka", function () {
-                    var o = this.getOrders();
-                    o.Items = $.grep(this.getOrders().Items, function (o) { return o.localId && o.localId != id; })
-                    this.saveOrders();
+                    var o = self.orders;
+                    o.Items = $.grep(self.orders.Items, function (o) { return o.localId && o.localId != id; })
+                    self.saveOrders();
                     callback();
                 });
-                
             }
         }
         else
             callback();
     },
     findOrder: function(id){
-        var r = $.grep(this.getOrders().Items, function (o) { return o.localId == id; });
+        var r = $.grep(this.orders.Items, function (o) { return o.localId == id; });
         if (r.length > 0)
             return r[0];
         return undefined;
+    },
+    updateOrder: function (order) {
+        var ret = false, self = this;
+        $.each(this.orders.Items, function () {
+            if (this.Status != order.StatusOrder) {
+                this.Status = order.StatusOrder;
+                if (!self.isOrderInProcess(this))
+                    this.Status = "";
+                else 
+                    ret |= true;
+            }
+        });
+        return ret;
     },
     sendOrder: function (order, callback, errCalback) {
         if (order.IsNew)
         {
             order.IsNew = false;
-            this.getOrders().Items.push(order);
+            this.orders.Items.push(order);
             this.saveOrders();
         }
 
-        if (order.CustomerPhone && this._settings.userPhone != order.CustomerPhone) {
-            this._settings.userPhone = order.CustomerPhone;
+        if (order.CustomerPhone && this.settings.userPhone != order.CustomerPhone) {
+            this.settings.userPhone = order.CustomerPhone;
             this.saveSettings();
         }
 
         order.Status = "New";
         Service.callService("order", order, function (d) {
+            order.GUID = d.Id;
             Service.saveOrders();
             callback(d);
         }, function (d) {
@@ -151,49 +169,65 @@
             Service.saveOrders();
             errCalback(d);
         });
-
-
     },
     getOrders: function () {
-        if (!this._orders)
+        if (!this.orders)
         {
             var s = window.localStorage.getItem("orders");
             if (s)
-                this._orders = JSON.parse(s);
+                this.orders = JSON.parse(s);
             else
-                this._orders = { Items: [], Current: {} };
+                this.orders = { Items: [], Current: {} };
         }
-        return this._orders;
+        return this.orders;
     },
     saveOrders: function(){
-        window.localStorage.setItem("orders", JSON.stringify(this._orders));
+        window.localStorage.setItem("orders", JSON.stringify(this.orders));
     },
     getDetail: function (entity, id, callback) {
         this.callService("itemmobile", { Id: entity + "_" + id }, callback, callback);
     },
     getSettings: function () {
-        if (!Service._settings || !Service._settings.sessionId) {
+        if (!Service.settings || !Service.settings.sessionId) {
             var s = window.localStorage.getItem("settings");
             if (s) {
-                if (Service._settings)
-                    Service._settings = $.extend(Service._settings, JSON.parse(s));
+                if (Service.settings)
+                    Service.settings = $.extend(Service.settings, JSON.parse(s));
                 else
-                    Service._settings = JSON.parse(s);
+                    Service.settings = JSON.parse(s);
             }
             else
-                Service._settings = {};
+                Service.settings = {};
         }
-        return Service._settings;
+        return Service.settings;
     },
     saveSettings: function (data) {
         if(data)
-            Service._settings = data;
-        window.localStorage.setItem("settings", JSON.stringify(Service._settings));
+            Service.settings = data;
+        window.localStorage.setItem("settings", JSON.stringify(Service.settings));
+    },
+    getCompanies: function (version) {
+        var self = this;
+        if (!self.companies) {
+            var s = window.localStorage.getItem("companies");
+            if (s) {
+                self.companies = JSON.parse(s);
+            }
+            else {
+                this.callService("data", { Id: "companiesfortowns" }, function (d) {
+                    self.companies = d;
+                });
+            }
+        }
+        return self.companies;
+    },
+    saveCompanies: function () {
+        window.localStorage.setItem("companies", JSON.stringify(Service.companies));
     },
     callService: function (method, data, successDelegate, errorDelegate) {
         app.log("Service.callService: " + method);
         Service.connectionError = null;
-        if (!this._settings.url) {
+        if (!this.settings.url) {
             Service.connectionError = "Chýba adresa servisu";
             if (data)
                 data.ErrorMessage = Service.connectionError;
@@ -202,9 +236,9 @@
         }
         else {
             if (data) {
-                data.UserTicket = this._settings.sessionId;
+                data.UserTicket = this.settings.sessionId;
             }
-            $.post(this._settings.url + "/mobileclient/" + method, data)
+            $.post(this.settings.url + "/mobileclient/" + method, data)
                 .done(function (d) {
                     if (d) {
                         app.log(method + ": OK");
