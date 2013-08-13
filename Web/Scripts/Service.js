@@ -1,9 +1,5 @@
 ﻿var Service = {
     online: false,
-    ordersVer: undefined,
-    transporterVer: undefined,
-    transporter: null,
-    isSendloginHistory: false,
     connectionError: undefined,
     orders: undefined,
     companies: undefined,
@@ -48,10 +44,10 @@
             callback();
     },
     waitingOffers: function () {
-        var ret = "", self = this;
+        var ret = [], self = this;
         $.each(this.orders.Items, function () {
             if (this.GUID && self.isOrderInProcess(this))
-                ret += this.GUID + "||";
+                ret.push(this.GUID);
         });
         return ret;
     },
@@ -112,8 +108,7 @@
         if (order) {
             if (order.Status != "" && order.GUID)
                 app.showConfirm("Chcete zrušiť objednávku?","Objednávka", function () {
-                    //CANCEL
-                    callback();
+                    self.callService("OrderAction", { Action: "TaxiCustomerCancelOrder", GUID_TransporterOrder: order.GUID }, callback);
                 });
             else {
                 app.showConfirm("Zmazať z histórie?", "Objednávka", function () {
@@ -136,7 +131,8 @@
     updateOrder: function (order) {
         var ret = false, self = this;
         $.each(this.orders.Items, function () {
-            if (this.Status != order.StatusOrder) {
+            if (this.GUID == order.GUID && this.Status != order.StatusOrder) {
+                self.orders.IsChanged = true;
                 this.Status = order.StatusOrder;
                 if (!self.isOrderInProcess(this))
                     this.Status = "";
@@ -151,6 +147,14 @@
         {
             order.IsNew = false;
             this.orders.Items.push(order);
+            this.orders.Items.sort(function (a, b) {
+                if (b.OrderToDate < a.OrderToDate)
+                    return -1;
+                if (b.OrderToDate > a.OrderToDate)
+                    return 1;
+                return 0;
+            });
+            this.orders.Items = this.orders.Items.slice(0, 10);
             this.saveOrders();
         }
 
@@ -160,6 +164,7 @@
         }
 
         order.Status = "New";
+        order.GUID = null;
         Service.callService("order", order, function (d) {
             order.GUID = d.Id;
             Service.saveOrders();
@@ -181,8 +186,9 @@
         }
         return this.orders;
     },
-    saveOrders: function(){
+    saveOrders: function () {
         window.localStorage.setItem("orders", JSON.stringify(this.orders));
+        this.orders.IsChanged = false;
     },
     getDetail: function (entity, id, callback) {
         this.callService("itemmobile", { Id: entity + "_" + id }, callback, callback);
@@ -255,10 +261,6 @@
                                 app.showAlert(d.ErrorMessage + " " + this.url, "Chyba");
                         }
                         else if (d.RefreshDataId) {
-                            if (d.oVer)
-                                Service.ordersVer = d.oVer;
-                            if (d.tVer)
-                                Service.transporterVer = d.tVer;
                             app.refreshData(d.RefreshDataId, function () { if (successDelegate) successDelegate(d); });
                         }
                         else if(successDelegate)

@@ -5,9 +5,9 @@
 /// <reference path="Service.js" />
 /// <reference path="PositionService.js" />
 /// <reference path="main.js" />
-/// <reference path="Notification.js" />
 /// <reference path="OrderDetail.js" />
 /// <reference path="OrdersView.js" />
 /// <reference path="OrderView.js" />
+/// <reference path="Map.js" />
 
 

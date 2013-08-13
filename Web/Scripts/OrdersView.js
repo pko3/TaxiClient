@@ -17,7 +17,7 @@
         var orders = Service.orders;
 
         if (orders && orders.Items) {
-            orders.Items.sort(function (a, b) { return a.OrderToDate - b.OrderToDate });
+            
             $.each(orders.Items, function () {
                 if (!this.GUID)
                     this.Status = "";

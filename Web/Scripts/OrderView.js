@@ -89,25 +89,44 @@
                 //$("#orderForm").hide();
                 //app.waiting();
                 var d = $("#orderForm-form").serializeArray();
-                $.each(d, function (i, v) { self.order[v.name] = v.value; });
+
+                var addressChanged = false;
+                $.each(d, function (i, v) {
+                    if (v.name == "StartCity" && v.value != self.order.StartCity || v.name == "StartAddress" && v.value != self.order.StartAddress)
+                        addressChanged = true;
+                    self.order[v.name] = v.value;
+                });
+
                 $.each(Service.companies.Items, function () { this.selected = this.GUID_sysCompany == self.order.TaxiCompany; });
                 Service.saveCompanies();
+                                
+                var send = function () {
+                    Service.sendOrder(self.order, function (data) {
+                        self.order.step = "fOrderOk";
+                        $("#orderForm fieldset").hide();
+                        $("#" + (self.order.step)).show();
+                        $("#orderWaiting").hide();
+                        $("#orderBack").show();
+                    }, function (data) {
+                        $("#fOrderErrorOutput").html(data.ErrorMessage);
+                        self.order.step = "fOrderError";
+                        $("#orderForm fieldset").hide();
+                        $("#" + (self.order.step)).show();
+                        $("#orderWaiting").hide();
+                        $("#orderBack").show();
+                        //$("#orderSave").show();
+                    });
+                }
 
-                Service.sendOrder(this.order, function (data) {
-                    self.order.step = "fOrderOk";
-                    $("#orderForm fieldset").hide();
-                    $("#" + (self.order.step)).show();
-                    $("#orderWaiting").hide();
-                    $("#orderBack").show();
-                }, function (data) {
-                    $("#fOrderErrorOutput").html(data.ErrorMessage);
-                    self.order.step = "fOrderError";
-                    $("#orderForm fieldset").hide();
-                    $("#" + (self.order.step)).show();
-                    $("#orderWaiting").hide();
-                    $("#orderBack").show();
-                    //$("#orderSave").show();
-                });
+                if (addressChanged) {
+                    Map.geocode({ address: self.order.StartAddress + ", " + self.order.StartCity }, function (a) {
+                        self.order.StartLatitude = a.lat;
+                        self.order.StartLongitude = a.lng;
+                        send();
+                    });
+                }
+                else send();
+
                 return;
                 break;
             default://fTaxiCompany
@@ -121,12 +140,25 @@
     this.loadForm = function () {
         var self = this;
         this.order = Service.orders.Current;
-        self.showForm();
+        this.order.geocodeStatus = false;
+
+        if (this.order.IsNew) {
+            Map.geocode({ 'latLng': new google.maps.LatLng(PositionService.lat, PositionService.lng) }, function (a) {
+                self.order.StartCity = a.City;
+                self.order.StartAddress = a.Address;
+                self.order.geocodeStatus = a.Status;
+                self.order.StartLatitude = PositionService.lat;
+                self.order.StartLongitude = PositionService.lng;
+                self.showForm();
+            });
+        }
+        else self.showForm();
     };
     this.showForm = function () {
             app.waiting(false);
             this.order.step = this.order.step || "fTaxiCompany";
-            this.order.companiesItems = Service.companies.Items;
+            if (Service.companies)
+                this.order.companiesItems = Service.companies.Items;
             $("#orderForm").html(OrderView.templateForm(this.order));
             $("#orderWaiting").hide();
             $("#orderForm fieldset").hide();
