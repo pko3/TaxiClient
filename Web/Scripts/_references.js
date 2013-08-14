@@ -9,5 +9,6 @@
 /// <reference path="OrdersView.js" />
 /// <reference path="OrderView.js" />
 /// <reference path="Map.js" />
+/// <reference path="taxiclient.js" />
 
 

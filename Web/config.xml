@@ -2,8 +2,8 @@
 <widget xmlns       = "http://www.w3.org/ns/widgets"
         xmlns:gap   = "http://phonegap.com/ns/1.0"
         id          = "sk.dflexnr.taxiclient"
-        versionCode = "100"
-        version     = "1.0.0">
+        versionCode = "101"
+        version     = "1.0.1">
  
     <name>TAXI client</name>
   
@@ -18,9 +18,7 @@
     
   <preference name="load-url-timeout" value="60000" />
   <preference name="phonegap-version" value="2.9.0" />
-
     <access origin="*" />
-    
     <feature name="http://api.phonegap.com/1.0/geolocation"/>
     <feature name="http://api.phonegap.com/1.0/network"/>
 </widget>

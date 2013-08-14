@@ -6,7 +6,6 @@
     settings: {
         userId: undefined,
         userPhone: undefined,
-        transporterId: undefined,
         url: "http://localhost/disp",
         sessionId: undefined,
         enableHighAccuracy: true
@@ -205,6 +204,9 @@
             else
                 Service.settings = {};
         }
+        if (TaxiClient) {
+            Service.settings.url = TaxiClient.ServiceUrl;
+        }
         return Service.settings;
     },
     saveSettings: function (data) {
@@ -213,19 +215,28 @@
         window.localStorage.setItem("settings", JSON.stringify(Service.settings));
     },
     getCompanies: function (version) {
-        var self = this;
-        if (!self.companies) {
+        if (!this.companies) {
             var s = window.localStorage.getItem("companies");
             if (s) {
-                self.companies = JSON.parse(s);
+                this.companies = JSON.parse(s);
             }
-            else {
-                this.callService("data", { Id: "companiesfortowns" }, function (d) {
-                    self.companies = d;
+            else
+                this.companies = { Version: 0, Items: [] };
+
+            if (TaxiClient.Companies && TaxiClient.Companies.Items && this.companies.version != TaxiClient.Companies.Version) {
+                $.each(this.companies.Items, function () {
+                    var c = this;
+                    if (this.selected)
+                        $.each(TaxiClient.Companies.Items, function () {
+                            if (c.GUID_sysCompany == this.GUID_sysCompany)
+                                this.selected = true;
+                        });
                 });
+                this.companies = TaxiClient.Companies;
+                this.saveCompanies();
             }
         }
-        return self.companies;
+        return this.companies;
     },
     saveCompanies: function () {
         window.localStorage.setItem("companies", JSON.stringify(Service.companies));
