@@ -1,4 +1,4 @@
-﻿var OrderView = function (messages) {
+﻿var OrderView = function () {
     this.index = 5;
     this.order = {};
     this.initialize = function() {

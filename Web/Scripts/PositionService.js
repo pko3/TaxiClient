@@ -92,9 +92,8 @@
             }
             if (Service.orders.IsChanged) {
                 Service.saveOrders();
+                app.refreshData(["orders"]);
             }
-
-            app.refreshData(["orders"]);
         }
     }
 }

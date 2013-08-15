@@ -1,4 +1,4 @@
-var OrderDetail = function (store) {
+var OrderDetail = function () {
 
     this.index = 4;
     this.initialize = function () {
@@ -6,16 +6,25 @@ var OrderDetail = function (store) {
     };
 
     this.render = function() {
-        //this.el.html(OrderDetail.template(store));
-        Map.initialize(this.el);
+        this.el.html(OrderDetail.template());
         return this;
     };
 
-    this.onShow = function(){
-        Map.showPosition();
-    }
+    this.onShow = function () {
+        Map.initialize($("#orderDetailMap"));
+        $("#orderDetailBack").click(function () { app.home(); });
+        this.loadData();
+    };
+
+    this.loadData = function () {
+        this.order = Service.orders.Current;
+        $("#orderDetailForm").html(OrderDetail.detailTemplate(this.order));
+        if (this.order.StartLatitude)
+            Map.setMap(this.order.StartLatitude, this.order.StartLongitude, this.order.TaxiLatitude, this.order.TaxiLongitude);
+    };
 
     this.initialize();
 }
 
-//OrderDetail.template = Handlebars.compile($("#map-tpl").html());
+OrderDetail.template = Handlebars.compile($("#orderDetail-tpl").html());
+OrderDetail.detailTemplate = Handlebars.compile($("#orderDetailForm-tpl").html());

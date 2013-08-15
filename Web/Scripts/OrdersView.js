@@ -17,12 +17,6 @@
         var orders = Service.orders;
 
         if (orders && orders.Items) {
-            
-            $.each(orders.Items, function () {
-                if (!this.GUID)
-                    this.Status = "";
-                this.FormatedDate = Service.formatDate(this.OrderToDate);
-            });
             $('.orders-list').html(OrdersView.liTemplate(orders.Items));
         }
         if (self.iscroll)
@@ -34,7 +28,8 @@
 
         $(".up").click(function () { self.changeOffer($(this).parent(), "Up"); });
         $(".down").click(function () { self.changeOffer($(this).parent(), "Down"); });
-
+        $(".content").click(function () { self.detail($(this).parent()); });
+        
         $('.orders-list').show();
     };
     this.changeOffer = function (btn, action) {
@@ -43,8 +38,15 @@
             Service.newOrder(btn.attr("data_localId"));
         }
         else {
-            Service.removeOrder(btn.attr("data_localId"), function () { self.loadData(); })
+            Service.removeOrder(btn.attr("data_localId"), function ()
+            {
+                self.loadData();
+            })
         }
+    };
+    this.detail = function (btn) {
+        var self = this;
+        Service.detail(btn.attr("data_localId"));
     };
     this.onShow = function () {
         if (!navigator.app)

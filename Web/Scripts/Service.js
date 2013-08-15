@@ -72,6 +72,13 @@
                 callback();
         });
     },
+    detail: function(id){
+        var order = this.findOrder(id);
+        if (order) {
+            this.orders.Current = order;
+            app.route("detail");
+        }
+    },
     newOrder: function (id) {
         var order = this.findOrder(id);
         if (order) {
@@ -87,12 +94,14 @@
             order = {};
             order.IsNew = true;
         }
+        order.GUID = undefined;
+        order.Status = "";
         order.OrderSource = "Phone";
         order.localId = "o_" + this.getUid();
         order.step = "";
-        //"Offered""Reserved""Waiting""Processing""Complete""Cancel"
         order.ErrorMessage = "";
         order.OrderToDate = Service.formatLocalIsoDate(new Date());
+        this.setOrderDescription(order);
         if (this.settings.userPhone)
             order.CustomerPhone = this.settings.userPhone;
 
@@ -102,12 +111,31 @@
     isOrderInProcess: function(order){
         return order && order.Status && (order.Status == "New" || order.Status == "Offered" || order.Status == "Reserved" || order.Status == "Waiting");
     },
+    setOrderDescription: function (order) {
+        if (!order.GUID)
+            order.Status = "";
+        switch (order.Status) {
+            case "New": order.StatusDescription = "Poslaná"; break;
+            case "Offered": order.StatusDescription = "Ponúknutá"; break;
+            case "Reserved": order.StatusDescription = "Rezervovaná"; break;
+            case "Waiting": order.StatusDescription = "Pristavené"; break;
+            case "Cancel": order.StatusDescription = "Zrušená"; break;
+            default : order.StatusDescription = "Vybavená"; break;
+        }
+        order.FormatedDate = Service.formatDate(order.OrderToDate);
+    },
     removeOrder: function (id, callback) {
         var order = this.findOrder(id), self = this;
         if (order) {
             if (order.Status != "" && order.GUID)
                 app.showConfirm("Chcete zrušiť objednávku?","Objednávka", function () {
-                    self.callService("OrderAction", { Action: "TaxiCustomerCancelOrder", GUID_TransporterOrder: order.GUID }, callback);
+                    self.callService("OrderAction", { Action: "TaxiCustomerCancelOrder", GUID_TransporterOrder: order.GUID }, function () {
+                        $.each(self.orders.Items, function () {
+                            self.setOrderDescription(this);
+                        });
+                        self.saveOrders();
+                        callback();
+                    });
                 });
             else {
                 app.showConfirm("Zmazať z histórie?", "Objednávka", function () {
@@ -130,18 +158,32 @@
     updateOrder: function (order) {
         var ret = false, self = this;
         $.each(this.orders.Items, function () {
-            if (this.GUID == order.GUID && this.Status != order.StatusOrder) {
-                self.orders.IsChanged = true;
-                this.Status = order.StatusOrder;
-                if (!self.isOrderInProcess(this))
-                    this.Status = "";
-                else 
-                    ret |= true;
+            if (this.GUID == order.GUID) {
+
+                if (this.Status != order.StatusOrder) {
+                    self.orders.IsChanged = true;
+                    this.Status = order.StatusOrder;
+                    if (!self.isOrderInProcess(this))
+                        this.Status = "";
+                    else
+                        ret |= true;
+                }
+
+                if (order.Latitude && order.Longitude && (this.TaxiLatitude != order.Latitude || this.TaxiLongitude != order.Longitude))
+                {
+                    this.TaxiLatitude = order.Latitude;
+                    this.TaxiLongitude = order.Longitude;
+                    self.orders.IsChanged = true;
+                }
+
+                if (self.orders.IsChanged)
+                    self.setOrderDescription(this);
             }
         });
         return ret;
     },
     sendOrder: function (order, callback, errCalback) {
+        var saveOrders = false, self=this;
         if (order.IsNew)
         {
             order.IsNew = false;
@@ -154,7 +196,6 @@
                 return 0;
             });
             this.orders.Items = this.orders.Items.slice(0, 10);
-            this.saveOrders();
         }
 
         if (order.CustomerPhone && this.settings.userPhone != order.CustomerPhone) {
@@ -162,14 +203,21 @@
             this.saveSettings();
         }
 
+        var company = this.findCompany(order.TaxiCompanyLocalId);
+        order.TaxiCompany = company.GUID_sysCompany;
+        order.TaxiCompanyDescription = company.Title + " " + company.Town;
+
         order.Status = "New";
         order.GUID = null;
+
         Service.callService("order", order, function (d) {
             order.GUID = d.Id;
+            self.setOrderDescription(order);
             Service.saveOrders();
             callback(d);
         }, function (d) {
             order.Status = "";
+            self.setOrderDescription(order);
             Service.saveOrders();
             errCalback(d);
         });
@@ -223,20 +271,31 @@
             else
                 this.companies = { Version: 0, Items: [] };
 
-            if (TaxiClient.Companies && TaxiClient.Companies.Items && this.companies.version != TaxiClient.Companies.Version) {
+            var selectedId = "";
+            if (TaxiClient.Companies && TaxiClient.Companies.Items && this.companies.Version != TaxiClient.Companies.Version) {
+                
                 $.each(this.companies.Items, function () {
-                    var c = this;
                     if (this.selected)
-                        $.each(TaxiClient.Companies.Items, function () {
-                            if (c.GUID_sysCompany == this.GUID_sysCompany)
-                                this.selected = true;
-                        });
+                        selectedId = this.GUID_sysCompany + this.Town;
                 });
+
                 this.companies = TaxiClient.Companies;
+
+                $.each(this.companies.Items, function () {
+                    this.localId = this.GUID_sysCompany + this.Town;
+                    this.selected = this.localId == selectedId;
+                });
+
                 this.saveCompanies();
             }
         }
         return this.companies;
+    },
+    findCompany: function(id){
+        var r = $.grep(this.companies.Items, function (o) { return o.localId == id; });
+        if (r.length > 0)
+            return r[0];
+        return undefined;
     },
     saveCompanies: function () {
         window.localStorage.setItem("companies", JSON.stringify(Service.companies));

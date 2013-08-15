@@ -128,7 +128,7 @@
         if (!page) {
             switch (p) {
                 case "orders": page = new OrdersView().render(); this.homePage = page; break;
-                case "orderDetail": page = new OrderDetail().render(); break;
+                case "detail": page = new OrderDetail().render(); break;
                 case "order": page = new OrderView().render(); break;
                 default: this.showAlert("Undefined page:" + p, "ERROR"); return;
             }
@@ -187,6 +187,9 @@
             $.each(dataIds, function () {
                 if(this == "orders"){
                     if (app.currentPageName == "orders") {
+                        app.currentPage.loadData();
+                    }
+                    if (app.currentPageName == "detail") {
                         app.currentPage.loadData();
                     }
                 }

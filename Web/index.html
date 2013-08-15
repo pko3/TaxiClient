@@ -28,7 +28,7 @@
 {{#.}}
 <div id="{{this.GUID}}" class="{{this.Status}}" data_GUID_Offer="{{this.GUID_Offer}}" data_StatusOffer="{{this.StatusOffer}}" data_Id="{{this.GUID}}" data_localId="{{this.localId}}"  data_Status="{{this.Status}}">
 <div class="icon down">&nbsp;</div>
-    <div class="content"><strong>{{this.FormatedDate}}</strong> {{this.StartCity}} {{this.StartAddress}}<br/>{{this.EndCity}} {{this.EndAddress}}<br/>{{this.Persons}} {{this.SpecialConditions}}</div>
+    <div class="content"><strong>{{this.FormatedDate}} {{this.StatusDescription}}</strong><br/> {{this.StartCity}} {{this.StartAddress}}<br/>{{this.EndCity}} {{this.EndAddress}}</div>
 <div class="icon up">&nbsp;</div></div>
 {{/.}}
 </script>
@@ -44,9 +44,9 @@
     <legend>Taxislužba</legend>
     <div>
         <!--<label for="StartCity">Taxislužba</label>-->
-    <select name="TaxiCompany" size="30" style="height:250px;" id="TaxiCompany">
+    <select name="TaxiCompanyLocalId" size="30" style="height:250px;" id="TaxiCompany">
         {{#each this.companiesItems}}
-         <option value="{{GUID_sysCompany}}" {{#if selected}}selected="selected"{{/if}}>{{Title}} - {{Town}}</option>
+         <option value="{{localId}}" {{#if selected}}selected="selected"{{/if}}>{{Title}} - {{Town}}</option>
         {{/each}}
     </select>
     </div>
@@ -116,6 +116,46 @@
     
  <div id="OrderFormError" class="error">{{this.ErrorMessage}}</div>
 </form>
+</script>
+
+
+<script id="orderDetail-tpl" type="text/x-handlebars-template">
+<div class='header'><button id="orderDetailBack" class="icon ico_back">&nbsp;</button></div>
+<div id="orderDetailForm"></div>
+<div id="orderDetailMap" style="position:absolute;width:100%;height:100%;"></div>
+</script>
+
+ <script id="orderDetailForm-tpl" type="text/x-handlebars-template">
+    <div>
+        <strong>{{this.FormatedDate}} {{this.StatusDescription}}</strong>
+    </div>
+    <div>
+        <strong>Taxislužba:</strong>   {{this.TaxiCompanyDescription}}
+    </div>
+    <div>
+        <strong>Odkiaľ:</strong> {{this.StartCity}} {{this.StartAddress}}
+    </div>
+     {{#if this.EndCity}}
+    <div>
+        <strong>Kam:</strong> {{this.EndCity}} {{this.EndAddress}}
+    </div>
+     {{/if}}
+    <div>
+        <strong>Kontakt:</strong> {{this.CustomerPhone}}
+    </div>
+     {{#if this.Persons}}
+    <div>
+        <strong>Počet pasažierov:</strong> {{this.Persons}}
+    </div>
+     {{/if}}
+     {{#if this.SpecialConditions}}
+    <div>
+        <strong>Špeciálne požiadavky:</strong> {{this.SpecialConditions}}
+    </div>
+     {{/if}}
+     {{#if this.ErrorMessage}}
+    <div class="error">{{this.ErrorMessage}}</div>
+     {{/if}}
 </script>
 
 <script src="phonegap.js"></script>
