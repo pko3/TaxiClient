@@ -56,7 +56,7 @@
         $("#OrderFormError").empty();
         switch (this.order.step) {
             case "fTaxiCompany":
-                if (!$("input:radio[name=TaxiCompanyLocalId]:checked").val()) {
+                if (!$("#TaxiCompanyLocalId").val()) {
                     $("#OrderFormError").html("Vyberte taxislužbu");
                     return;
                 }
@@ -133,7 +133,7 @@
 
         $("#orderForm fieldset").hide();
         $("#" + (this.order.step)).show();
-     };
+    };
     this.loadForm = function () {
         var self = this;
         this.order = Service.orders.Current;
@@ -154,8 +154,15 @@
     this.showForm = function () {
             app.waiting(false);
             this.order.step = this.order.step || "fTaxiCompany";
-            if (Service.companies)
+            var self = this;
+            if (Service.companies) {
                 this.order.companiesItems = Service.companies.Items;
+                $.each(Service.companies.Items, function () {
+                    if (this.selected)
+                        self.order.TaxiCompanyLocalId = this.localId;
+
+                });
+            }
             $("#orderForm").html(OrderView.templateForm(this.order));
             $("#orderWaiting").hide();
             $("#orderForm fieldset").hide();
@@ -166,6 +173,12 @@
 
     this.initialize();
 }
+
+OrderView.radioCompanyClick = function (id) {
+    $(".radio").removeClass("selected");
+    $("#r" + id).addClass("selected");
+    $("#TaxiCompanyLocalId").val(id);
+};
 
 OrderView.template = Handlebars.compile($("#order-tpl").html());
 OrderView.templateForm = Handlebars.compile($("#orderForm-tpl").html());

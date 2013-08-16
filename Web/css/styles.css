@@ -152,6 +152,29 @@ input
 		vertical-align: middle;
 	}
 
+.radiolist {
+    border-top: 1px solid #666;
+    border-left: 1px solid #666;
+    border-right: 1px solid #666;
+}
+.radiolist > div
+{
+    padding:8px;
+    border-bottom: 1px solid #666;
+}
+
+.radiolist > div:hover
+{
+    background-color: #4286f5;
+	color: #fff;
+}
+
+.radiolist > div.selected
+{
+	background-color: #4286f5;
+	color: #fff;
+}
+
 label
 {
 	padding: 4px 4px;

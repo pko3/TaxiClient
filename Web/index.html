@@ -42,9 +42,10 @@
 <form id="orderForm-form">
     <fieldset id="fTaxiCompany">
     <legend>Taxislužba</legend>
-    <div>
+        <input type="hidden" id="TaxiCompanyLocalId" name="TaxiCompanyLocalId" value="{{this.TaxiCompanyLocalId}}"/>
+    <div class="radiolist">
         {{#each this.companiesItems}}
-        <input type="radio" id="tc{{localId}}" name="TaxiCompanyLocalId" value="{{localId}}" {{#if selected}}checked="checked"{{/if}}><label for="tc{{localId}}">{{Title}} - {{Town}}</label><br>
+        <div id="r{{localId}}" class="radio{{#if selected}} selected{{/if}}" onclick="OrderView.radioCompanyClick('{{localId}}');">{{Title}} - {{Town}}</div>
         {{/each}}
     </div>
     </fieldset>
@@ -54,6 +55,8 @@
       <div>
         <label for="OrderToDate">Dátum a čas</label>
         <input id="OrderToDate" name="OrderToDate" type="datetime-local" value="{{this.OrderToDate}}" />
+          <input type="date" />
+          <input type="time" />
     </div>
     <div>
         <label for="StartCity">Mesto</label>
