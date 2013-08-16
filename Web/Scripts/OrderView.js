@@ -56,7 +56,7 @@
         $("#OrderFormError").empty();
         switch (this.order.step) {
             case "fTaxiCompany":
-                if (!$("#TaxiCompany").val()) {
+                if (!$("input:radio[name=TaxiCompanyLocalId]:checked").val()) {
                     $("#OrderFormError").html("Vyberte taxislužbu");
                     return;
                 }
@@ -96,10 +96,7 @@
                         addressChanged = true;
                     self.order[v.name] = v.value;
                 });
-
-                $.each(Service.companies.Items, function () { this.selected = this.GUID_sysCompany == self.order.TaxiCompany; });
-                Service.saveCompanies();
-                                
+                
                 var send = function () {
                     Service.sendOrder(self.order, function (data) {
                         self.order.step = "fOrderOk";

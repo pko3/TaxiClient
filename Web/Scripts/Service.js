@@ -207,6 +207,12 @@
         order.TaxiCompany = company.GUID_sysCompany;
         order.TaxiCompanyDescription = company.Title + " " + company.Town;
 
+        $.each(this.companies.Items, function () {
+            this.selected = this.localId == company.localId;
+        });
+
+        Service.saveCompanies();
+
         order.Status = "New";
         order.GUID = null;
 

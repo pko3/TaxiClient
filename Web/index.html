@@ -43,12 +43,9 @@
     <fieldset id="fTaxiCompany">
     <legend>Taxislužba</legend>
     <div>
-        <!--<label for="StartCity">Taxislužba</label>-->
-    <select name="TaxiCompanyLocalId" size="30" style="height:250px;" id="TaxiCompany">
         {{#each this.companiesItems}}
-         <option value="{{localId}}" {{#if selected}}selected="selected"{{/if}}>{{Title}} - {{Town}}</option>
+        <input type="radio" id="tc{{localId}}" name="TaxiCompanyLocalId" value="{{localId}}" {{#if selected}}checked="checked"{{/if}}><label for="tc{{localId}}">{{Title}} - {{Town}}</label><br>
         {{/each}}
-    </select>
     </div>
     </fieldset>
 
