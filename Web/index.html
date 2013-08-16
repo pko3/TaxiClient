@@ -45,7 +45,7 @@
         <input type="hidden" id="TaxiCompanyLocalId" name="TaxiCompanyLocalId" value="{{this.TaxiCompanyLocalId}}"/>
     <div class="radiolist">
         {{#each this.companiesItems}}
-        <div data_localId="{{localId}}" class="radio{{#if selected}} selected{{/if}}">{{Title}} - {{Town}} <br> {{localId}}</div>
+        <div data_localId="{{localId}}" class="radio{{#if selected}} selected{{/if}}">{{Title}} - {{Town}}</div>
         {{/each}}
     </div>
     </fieldset>
@@ -55,8 +55,6 @@
       <div>
         <label for="OrderToDate">Dátum a čas</label>
         <input id="OrderToDate" name="OrderToDate" type="datetime-local" value="{{this.OrderToDate}}" />
-          <input type="date" />
-          <input type="time" />
     </div>
     <div>
         <label for="StartCity">Mesto</label>

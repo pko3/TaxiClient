@@ -59,7 +59,7 @@
                     list_IdOrder: list_IdOrder.join("||"),
                     Id: Service.settings.sessionId,
                     Lat: posChanged ? PositionService.lat : 0,
-                    Lng: posChanged ? PositionService.lng : 0,
+                    Lng: posChanged ? PositionService.lng : 0
                 },
                 function (d) { PositionService.startPool(); PositionService.refreshVersionData(d, list_IdOrder); },
                 function (d) { PositionService.startPool(); if (d.ErrorMessage) app.info(d.ErrorMessage); });

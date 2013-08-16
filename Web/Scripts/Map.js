@@ -128,8 +128,8 @@
                     var bounds = new google.maps.LatLngBounds();
                     bounds.extend(Map.point);
                     bounds.extend(tPoint);
-                    Map.tmarker.setPosition();
-                    Map.map.fitBounds(this.bounds);
+                    Map.tmarker.setPosition(tPoint);
+                    Map.map.fitBounds(bounds);
                 }
             }
             else {
