@@ -172,9 +172,9 @@
             $(".radio").click(function () { self.radioCompanyClick($(this)); });
     };
     this.radioCompanyClick = function (btn) {
-        var localId = btn.attr("data_Id");
+        var localId = btn.attr("data_localId");
         $(".radio").removeClass("selected");
-        $("#r" + localId).addClass("selected");
+        btn.addClass("selected");
         $("#TaxiCompanyLocalId").val(localId);
     };
 

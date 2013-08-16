@@ -86,8 +86,8 @@
                             function () { app.info("powermanagement Error Release"); }
                     );
             }, false);
-            document.addEventListener("menubutton", function () { e.preventDefault(); app.settings(); }, false);
-            document.addEventListener("backbutton", function (e) {
+            //document.addEventListener("menubutton", function () { e.preventDefault(); app.settings(); }, false);
+            document.addEventListener('backbutton', function (e) {
                 if (currentPage && currentPage.back)
                 {
                     currentPage.back();
