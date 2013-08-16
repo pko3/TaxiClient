@@ -169,16 +169,17 @@
             $("#" + (this.order.step)).show();
             $("#orderForm").show();
             $("#orderSave").removeClass("transparent");
+            $(".radio").click(function () { self.radioCompanyClick($(this)); });
+    };
+    this.radioCompanyClick = function (btn) {
+        var localId = btn.attr("data_Id");
+        $(".radio").removeClass("selected");
+        $("#r" + localId).addClass("selected");
+        $("#TaxiCompanyLocalId").val(localId);
     };
 
     this.initialize();
 }
-
-OrderView.radioCompanyClick = function (id) {
-    $(".radio").removeClass("selected");
-    $("#r" + id).addClass("selected");
-    $("#TaxiCompanyLocalId").val(id);
-};
 
 OrderView.template = Handlebars.compile($("#order-tpl").html());
 OrderView.templateForm = Handlebars.compile($("#orderForm-tpl").html());
