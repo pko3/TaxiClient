@@ -71,7 +71,7 @@
                 var now = new Date();
                 if (d < now)
                 {
-                    $("#OrderFormError").html("Chybný dátum a čas - zvoľte vyššií<br/> " + Service.formatDate(d) + " < " + Service.formatDate(now));
+                    $("#OrderFormError").html("Zvoľte vyššií dátum a čas");
                     return;
                 }
                 this.order.step = "fStartAddress";

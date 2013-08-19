@@ -75,22 +75,21 @@
         //menubutton
         //searchbutton
         try {
-            document.addEventListener('pause', function () { app.info("Pause"); }, false);
-            document.addEventListener('resume', function () { app.info("Resume"); }, false);
-            document.addEventListener("offline", function () { app.info("Offline"); }, false);
-            document.addEventListener("online", function () { app.info("Online"); }, false);
             //document.addEventListener("menubutton", function () { e.preventDefault(); app.settings(); }, false);
             document.addEventListener('backbutton', function (e) {
-                if (currentPage && currentPage.back)
+                if (app.currentPage && app.currentPage.back)
                 {
-                    currentPage.back();
+                    app.currentPage.back();
                 }
                 else if (app.currentPageName != "orders") {
                     e.preventDefault();
                     app.home();
                 }
             }, false);
-
+            document.addEventListener('pause', function () { app.info("Pause"); }, false);
+            document.addEventListener('resume', function () { app.info("Resume"); }, false);
+            document.addEventListener("offline", function () { app.info("Offline"); }, false);
+            document.addEventListener("online", function () { app.info("Online"); }, false);
             //document.addEventListener("unload", function () {
             //    app.info("Unload");
             //    cordova.require('cordova/plugin/powermanagement').release(
@@ -166,6 +165,7 @@
         }
 
         $('body').append(page.el);
+        self.currentPage = page;
 
         setTimeout(function () {
             $(self.currentPage.el).attr('class', 'page transition ' + currentPageDest);
@@ -174,7 +174,6 @@
                 page.onShow();
             else
                 self.waiting(true);
-            self.currentPage = page;
             $('.stage-right, .stage-left').remove();
         });
     },
