@@ -593,3 +593,13 @@ button.ico_end
 	width: 100%;
 	height: 100%;
 }
+
+.dwl {
+    display:none;
+}
+.dwc {
+    padding-top:0;
+}
+.dwwr {
+    padding:0;
+}

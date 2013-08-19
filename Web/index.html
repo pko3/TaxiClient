@@ -3,8 +3,8 @@
 <head>
     <title>TAXI</title>
     <meta charset="utf-8"/>
-    <link href="css/styles.css" rel="stylesheet">
     <link href="css/mobiscroll.custom-2.6.2.min.css" rel="stylesheet" />
+    <link href="css/styles.css" rel="stylesheet">
 </head>
 <body onload="onLoad()">
 
@@ -53,7 +53,7 @@
 
     <fieldset id="fOrderToDate">
         <legend>Dátum a čas</legend>
-        <input id="OrderToDate" name="OrderToDate" type="text" readonly="readonly" value="{{this.OrderToDate}}" />
+        <input id="OrderToDate" name="OrderToDate" type="hidden" readonly="readonly" value="{{this.OrderToDate}}" />
         <button id="OrderToDateNow"> Teraz </button>
     </fieldset>
 

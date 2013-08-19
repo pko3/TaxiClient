@@ -69,9 +69,9 @@
 
                 var d = Service.parseDate($("#OrderToDate").val());
                 var now = new Date();
-                if (d < now)
+                if (d.valueOf() < now.valueOf())
                 {
-                    $("#OrderFormError").html("Chybný dátum a čas - zvoľte vyžšií");
+                    $("#OrderFormError").html("Chybný dátum a čas - zvoľte vyššií");
                     return;
                 }
                 this.order.step = "fStartAddress";
@@ -184,10 +184,12 @@
             });
 
             var now = new Date();
-            var minDate = new Date(now.getFullYear(), 0);
-            var maxDate = new Date(now.getFullYear() + 1, 11);
+            var minDate = now;// new Date(now.getFullYear(),now.getMonth(),now.getDate());
+            var maxDate = new Date();
+            maxDate.setHours(maxDate.getHours() + 24);
             
-            var scr = $("#OrderToDate").scroller({ mode: "scroller", showNow: true, display: "inline", theme: "android-ics light", preset: 'datetime', lang: "sk", minDate: minDate, maxDate: maxDate, stepMinute: 5 });
+            
+            var scr = $("#OrderToDate").scroller({ mode: "clickpick", showNow: true, display: "inline", theme: "default", preset: 'datetime', lang: "sk", minDate: minDate, maxDate: maxDate, stepMinute: 5 });
             $("#OrderToDateNow").click(function () {
                 var date = Service.getDateForNweOrder();
                 $("#OrderToDate").val(Service.formatDate(date));

@@ -197,9 +197,9 @@
         }
 
         this.orders.Items.sort(function (a, b) {
-                if (b.Date < a.Date)
+            if (b.Date.valueOf() < a.Date.valueOf())
                     return -1;
-                if (b.Date > a.Date)
+            if (b.Date.valueOf() > a.Date.valueOf())
                     return 1;
                 return 0;
             });
