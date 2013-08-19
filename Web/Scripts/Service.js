@@ -100,7 +100,9 @@
         order.localId = "o_" + this.getUid();
         order.step = "";
         order.ErrorMessage = "";
-        order.OrderToDate = Service.formatLocalIsoDate(new Date());
+
+        order.Date = this.getDateForNweOrder();
+        order.OrderToDate = Service.formatDate(order.Date);
         this.setOrderDescription(order);
         if (this.settings.userPhone)
             order.CustomerPhone = this.settings.userPhone;
@@ -122,7 +124,7 @@
             case "Cancel": order.StatusDescription = "Zrušená"; break;
             default : order.StatusDescription = "Vybavená"; break;
         }
-        order.FormatedDate = Service.formatDate(order.OrderToDate);
+        //order.FormatedDate = Service.formatDate(order.OrderToDate);
     },
     removeOrder: function (id, callback) {
         var order = this.findOrder(id), self = this;
@@ -183,26 +185,30 @@
         return ret;
     },
     sendOrder: function (order, callback, errCalback) {
-        var saveOrders = false, self=this;
+        var saveOrders = false, self = this;
+
+        order.Date = Service.parseDate(order.OrderToDate);
+
         if (order.IsNew)
         {
             order.IsNew = false;
             this.orders.Items.push(order);
-            this.orders.Items.sort(function (a, b) {
-                if (b.OrderToDate < a.OrderToDate)
+            this.orders.Items = this.orders.Items.slice(0, 10);
+        }
+
+        this.orders.Items.sort(function (a, b) {
+                if (b.Date < a.Date)
                     return -1;
-                if (b.OrderToDate > a.OrderToDate)
+                if (b.Date > a.Date)
                     return 1;
                 return 0;
             });
-            this.orders.Items = this.orders.Items.slice(0, 10);
-        }
 
         if (order.CustomerPhone && this.settings.userPhone != order.CustomerPhone) {
             this.settings.userPhone = order.CustomerPhone;
             this.saveSettings();
         }
-
+                
         var company = this.findCompany(order.TaxiCompanyLocalId);
         order.TaxiCompany = company.GUID_sysCompany;
         order.TaxiCompanyDescription = company.Title + " " + company.Town;
@@ -356,64 +362,33 @@
                 });
         }
     },
-    parseJsonDate: function (jsonDate) {
-        try{
-            var offset = 0; // new Date().getTimezoneOffset() * 60000;
-            var parts = /\/Date\((-?\d+)([+-]\d{2})?(\d{2})?.*/.exec(jsonDate);
-
-            if (parts[2] == undefined)
-                parts[2] = 0;
-
-            if (parts[3] == undefined)
-                parts[3] = 0;
-
-            return new Date(+parts[1] + offset + parts[2] * 3600000 + parts[3] * 60000);
-        }
-        catch (err) {
-            return undefined;
-        }
-    },
-    formatJsonDate: function (jsonDate) {
-        var d = Service.parseJsonDate(jsonDate);
-        //return d.toLocaleDateString() + " <br/><strong>" + d.toLocaleTimeString().substring(0, 5) + "</strong>"; //
-        return this.formatDate(d)
-            
-    },
     formatDate: function (d) {
+            function pad(number) {
+                var r = String(number);
+                if (r.length === 1) {
+                    r = '0' + r;
+                }
+                return r;
+            }
+
         if (!d)
             return "";
         if (d.constructor === String)
             d = new Date(d);
         if (d)
-            return d.getDate() + ". " + d.getMonth() + ". " + d.getFullYear() + " " + d.toTimeString().substring(0, 5);
+            return pad(d.getDate()) + ". " + pad(d.getMonth() + 1) + ". " + d.getFullYear() + " " + pad(d.getHours()) + ":" + pad(d.getMinutes());
         return "";
     },
-    formatLocalIsoDate: function (d) {
-
-        function pad(number) {
-            var r = String(number);
-            if (r.length === 1) {
-                r = '0' + r;
-            }
-            return r;
-        }
-
-        if (d)
-        return d.getFullYear()
-              + '-' + pad(d.getMonth() + 1)
-              + '-' + pad(d.getDate())
-              + 'T' + pad(d.getHours())
-              + ':' + pad(d.getMinutes());
-              //+ ':' + pad(d.getUTCSeconds())
-              //+ '.' + String((d.getUTCMilliseconds() / 1000).toFixed(3)).slice(2, 5)
-              //+ 'Z';
-        
-
-        //if (d)
-        //    return d.toISOString().substr(0,16);
-        
-        return "";
+    getDateForNweOrder: function(){
+        var coeff = 1000 * 60 * 5;
+        var date = new Date();  //or use any other date
+        date.setMinutes(date.getMinutes() + 3);
+        return new Date(Math.round(date.getTime() / coeff) * coeff);
     },
+    parseDate: function (d) {
+        return new Date(parseInt(d.substr(8, 4)), parseInt(d.substr(4, 2)) - 1, parseInt(d.substr(0, 2)), parseInt(d.substr(13, 2)), parseInt(d.substr(16, 2)));
+    },
+    
     getUid: function () {
         return Math.random().toString(16).replace(".", "") + (new Date()).valueOf().toString(16);
     }

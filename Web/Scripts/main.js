@@ -79,13 +79,6 @@
             document.addEventListener('resume', function () { app.info("Resume"); }, false);
             document.addEventListener("offline", function () { app.info("Offline"); }, false);
             document.addEventListener("online", function () { app.info("Online"); }, false);
-            document.addEventListener("unload", function () {
-                app.info("Unload");
-                cordova.require('cordova/plugin/powermanagement').release(
-                            function () { app.info("powermanagement Release"); },
-                            function () { app.info("powermanagement Error Release"); }
-                    );
-            }, false);
             //document.addEventListener("menubutton", function () { e.preventDefault(); app.settings(); }, false);
             document.addEventListener('backbutton', function (e) {
                 if (currentPage && currentPage.back)
@@ -97,6 +90,14 @@
                     app.home();
                 }
             }, false);
+
+            //document.addEventListener("unload", function () {
+            //    app.info("Unload");
+            //    cordova.require('cordova/plugin/powermanagement').release(
+            //                function () { app.info("powermanagement Release"); },
+            //                function () { app.info("powermanagement Error Release"); }
+            //        );
+            //}, false);
 
         } catch (err) {
             app.log(err);

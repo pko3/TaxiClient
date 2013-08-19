@@ -10,5 +10,6 @@
 /// <reference path="OrderView.js" />
 /// <reference path="Map.js" />
 /// <reference path="taxiclient.js" />
+/// <reference path="../lib/mobiscroll.custom-2.6.2.min.js" />
 
 

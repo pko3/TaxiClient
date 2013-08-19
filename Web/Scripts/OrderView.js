@@ -24,8 +24,11 @@
             case "fTaxiCompany":
                 app.home();
                 return;
-            case "fStartAddress":
+            case "fOrderToDate":
                 this.order.step = "fTaxiCompany";
+                break;
+            case "fStartAddress":
+                this.order.step = "fOrderToDate";
                 break;
             case "fEndAddress":
                 this.order.step = "fStartAddress";
@@ -58,6 +61,17 @@
             case "fTaxiCompany":
                 if (!$("#TaxiCompanyLocalId").val()) {
                     $("#OrderFormError").html("Vyberte taxislužbu");
+                    return;
+                }
+                this.order.step = "fOrderToDate";
+                break;
+            case "fOrderToDate":
+
+                var d = Service.parseDate($("#OrderToDate").val());
+                var now = new Date();
+                if (d < now)
+                {
+                    $("#OrderFormError").html("Chybný dátum a čas - zvoľte vyžšií");
                     return;
                 }
                 this.order.step = "fStartAddress";
@@ -165,6 +179,22 @@
             }
             $("#orderForm").html(OrderView.templateForm(this.order));
             $("#orderWaiting").hide();
+            $('input').on('focus', function () {
+                document.body.scrollTop = $(this).offset().top;
+            });
+
+            var now = new Date();
+            var minDate = new Date(now.getFullYear(), 0);
+            var maxDate = new Date(now.getFullYear() + 1, 11);
+            
+            var scr = $("#OrderToDate").scroller({ mode: "scroller", showNow: true, display: "inline", theme: "android-ics light", preset: 'datetime', lang: "sk", minDate: minDate, maxDate: maxDate, stepMinute: 5 });
+            $("#OrderToDateNow").click(function () {
+                var date = Service.getDateForNweOrder();
+                $("#OrderToDate").val(Service.formatDate(date));
+                $("#OrderToDate").scroller('setDate', date);
+                return false;
+            });
+        
             $("#orderForm fieldset").hide();
             $("#" + (this.order.step)).show();
             $("#orderForm").show();
