@@ -165,8 +165,7 @@
         }
 
         $('body').append(page.el);
-        self.currentPage = page;
-
+        
         setTimeout(function () {
             $(self.currentPage.el).attr('class', 'page transition ' + currentPageDest);
             $(page.el).attr('class', 'page stage-center transition');
@@ -174,6 +173,7 @@
                 page.onShow();
             else
                 self.waiting(true);
+            self.currentPage = page;
             $('.stage-right, .stage-left').remove();
         });
     },
