@@ -386,7 +386,7 @@
         return new Date(Math.round(date.getTime() / coeff) * coeff);
     },
     parseDate: function (d) {
-        return new Date(parseInt(d.substr(8, 4)), parseInt(d.substr(4, 2)) - 1, parseInt(d.substr(0, 2)), parseInt(d.substr(13, 2)), parseInt(d.substr(16, 2)));
+        return new Date(parseInt(d.substring(8, 12), 10), parseInt(d.substring(4, 6), 10) - 1, parseInt(d.substring(0, 2), 10), parseInt(d.substring(13, 15), 10), parseInt(d.substring(16, 18), 10));
     },
     
     getUid: function () {
