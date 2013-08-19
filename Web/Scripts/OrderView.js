@@ -69,9 +69,9 @@
 
                 var d = Service.parseDate($("#OrderToDate").val());
                 var now = new Date();
-                if (d.valueOf() < now.valueOf())
+                if (d < now)
                 {
-                    $("#OrderFormError").html("Chybný dátum a čas - zvoľte vyššií");
+                    $("#OrderFormError").html("Chybný dátum a čas - zvoľte vyššií<br/> " + Service.formatDate(d) + " < " + Service.formatDate(now));
                     return;
                 }
                 this.order.step = "fStartAddress";
