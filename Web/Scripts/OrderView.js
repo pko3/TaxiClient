@@ -71,7 +71,7 @@
                 var now = new Date();
                 if (d < now)
                 {
-                    $("#OrderFormError").html("Zvoľte vyššií dátum a čas");
+                    $("#OrderFormError").html("Zvoľte vyšší dátum a čas");
                     return;
                 }
                 this.order.step = "fStartAddress";
@@ -89,6 +89,10 @@
             case "fCustomerPhone":
                 if (!$("#CustomerPhone").val()) {
                     $("#OrderFormError").html("Zadajte Váš telefón");
+                    return;
+                }
+                if (!$("#CustomerName").val()) {
+                    $("#OrderFormError").html("Zadajte Vaše meno");
                     return;
                 }
                 this.order.step = "fSpecialConditions";
