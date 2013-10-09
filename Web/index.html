@@ -72,7 +72,7 @@
     <legend>Kam</legend>
     <div>
         <label for="EndCity">Mesto</label>
-        <input name="EndCity" type="text" value="{{this.EndCity}}" />
+        <input id="EndCity" name="EndCity" type="text" onfocus="fillEndCity()" value="{{this.EndCity}}" />
     </div>
     <div>
         <label for="EndAddress">Adresa</label>
@@ -84,6 +84,10 @@
     <div>
         <label for="CustomerPhone">Telefón</label>
         <input id="CustomerPhone" name="CustomerPhone" type="tel" value="{{this.CustomerPhone}}" />
+    </div>
+     <div>
+        <label for="CustomerName">Meno</label>
+        <input id="CustomerName" name="CustomerName" type="text" value="{{this.CustomerName}}" />
     </div>
   </fieldset>    
     <fieldset id="fSpecialConditions">
@@ -134,6 +138,9 @@
         <strong>Taxislužba:</strong>   {{this.TaxiCompanyDescription}}
     </div>
     <div>
+        <strong>Taxi:</strong>   {{this.GUID}} {{this.SPZ}} {{this.TimeToFree}} (min.)
+    </div>
+    <div>
         <strong>Odkiaľ:</strong> {{this.StartCity}} {{this.StartAddress}}
     </div>
      {{#if this.EndCity}}
@@ -144,6 +151,10 @@
     <div>
         <strong>Kontakt:</strong> {{this.CustomerPhone}}
     </div>
+     <div>
+        <strong>Meno:</strong> {{this.CustomerName}}
+    </div>
+
      {{#if this.Persons}}
     <div>
         <strong>Počet pasažierov:</strong> {{this.Persons}}
