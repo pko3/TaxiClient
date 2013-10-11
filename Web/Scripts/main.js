@@ -130,6 +130,9 @@
                 case "orders": page = new OrdersView().render(); this.homePage = page; break;
                 case "detail": page = new OrderDetail().render(); break;
                 case "order": page = new OrderView().render(); break;
+                case "claim": page = new ClaimDetail().render(); break;
+                case "rate": page = new RateDetail().render(); break;
+
                 default: this.showAlert("Undefined page:" + p, "ERROR"); return;
             }
             this.pages[p] = page;

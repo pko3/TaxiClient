@@ -28,9 +28,12 @@
 <script id="orders-li-tpl" type="text/x-handlebars-template">
 {{#.}}
 <div id="{{this.GUID}}" class="{{this.Status}}" data_GUID_Offer="{{this.GUID_Offer}}" data_StatusOffer="{{this.StatusOffer}}" data_Id="{{this.GUID}}" data_localId="{{this.localId}}"  data_Status="{{this.Status}}">
-<div class="icon down">&nbsp;</div>
-    <div class="content"><strong>{{this.OrderToDate}} {{this.StatusDescription}}</strong><br/> {{this.StartCity}} {{this.StartAddress}}<br/>{{this.EndCity}} {{this.EndAddress}}</div>
-<div class="icon up">&nbsp;</div></div>
+   <div class="icon down">&nbsp;</div>
+   <div class="content"><strong>{{this.OrderToDate}} {{this.StatusDescription}}</strong><br/> {{this.StartCity}} {{this.StartAddress}}<br/>{{this.EndCity}} {{this.EndAddress}}</div>
+   <div class="icon claim">&nbsp;</div>
+   <div class="icon rate">&nbsp;</div>
+   <div class="icon up">&nbsp;</div>
+</div>
 {{/.}}
 </script>
 
@@ -123,6 +126,11 @@
 </form>
 </script>
 
+<script id="claimdetail-tpl" type="text/x-handlebars-template">
+<div class='header'><button id="claimback" class="icon ico_back">&nbsp;</button></div>
+<div id="Div1"></div>
+<div id="Div2" style="position:absolute;width:100%;height:100%;"></div>
+</script>
 
 <script id="orderDetail-tpl" type="text/x-handlebars-template">
 <div class='header'><button id="orderDetailBack" class="icon ico_back">&nbsp;</button></div>

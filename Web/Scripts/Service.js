@@ -80,6 +80,20 @@
             app.route("detail");
         }
     },
+    claim: function (id) {
+        var order = this.findOrder(id);
+        if (order) {
+            this.orders.Current = order;
+            app.route("claim");
+        }
+    },
+    rate: function (id) {
+        var order = this.findOrder(id);
+        if (order) {
+            this.orders.Current = order;
+            app.route("rate");
+        }
+    },
     newOrder: function (id) {
         var order = this.findOrder(id);
         if (order) {
