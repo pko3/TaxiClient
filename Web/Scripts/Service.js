@@ -94,6 +94,10 @@
             app.route("rate");
         }
     },
+    showHelp: function (id) {
+
+        alert('help');
+    },
     newOrder: function (id) {
         var order = this.findOrder(id);
         if (order) {
@@ -267,10 +271,16 @@
             if (s) {
                 this.orders = JSON.parse(s);
                 $.each(this.orders.Items, function () {
-                    if (this.norate === undefined)
-                        this.norate = true;
-                    if (this.noclaim === undefined)
-                        this.noclaim = true;
+                    if (this.Status == "") {
+                        if (this.norate === undefined)
+                            this.norate = true;
+                        if (this.noclaim === undefined)
+                            this.noclaim = true;
+                    }
+                    else {
+                        this.norate = null;
+                        this.noclaim = null;
+                    }
                 });
             }
             else

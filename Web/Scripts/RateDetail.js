@@ -6,25 +6,23 @@ var RateDetail = function () {
     };
 
     this.render = function() {
-        this.el.html(OrderDetail.template());
+        this.el.html(RateDetail.template());
         return this;
     };
 
     this.onShow = function () {
-        Map.initialize($("#orderDetailMap"));
-        $("#orderDetailBack").click(function () { app.home(); });
+        $("#rateback").click(function () { app.home(); });
         this.loadData();
     };
 
     this.loadData = function () {
         this.order = Service.orders.Current;
-        $("#orderDetailForm").html(OrderDetail.detailTemplate(this.order));
-        if (this.order.StartLatitude)
-            Map.setMap(this.order.StartLatitude, this.order.StartLongitude, this.order.TaxiLatitude, this.order.TaxiLongitude);
+        $("#ratedetailForm").html(RateDetail.detailTemplate(this.order));
     };
 
     this.initialize();
 }
 
-OrderDetail.template = Handlebars.compile($("#orderDetail-tpl").html());
-OrderDetail.detailTemplate = Handlebars.compile($("#orderDetailForm-tpl").html());
+
+RateDetail.template = Handlebars.compile($("#ratedetail-tpl").html());
+RateDetail.detailTemplate = Handlebars.compile($("#ratedetailForm-tpl").html());

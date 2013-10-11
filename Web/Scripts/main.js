@@ -64,6 +64,8 @@
 
         $('body').on('click', '[data-route]', function (event) { app.route($(this).attr("data-route")); });
         $('body').on('click', '#newOrder', function (event) { Service.newOrder(); });
+        $('body').on('click', '#appHelp', function (event) { Service.showHelp(); });
+
         if (navigator.app)
             $('body').on('click', '#appExit', function () { app.end(function () { app.home(); }); });
         //deviceready
