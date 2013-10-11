@@ -264,8 +264,15 @@
         if (!this.orders)
         {
             var s = window.localStorage.getItem("orders");
-            if (s)
+            if (s) {
                 this.orders = JSON.parse(s);
+                $.each(this.orders.Items, function () {
+                    if (this.norate === undefined)
+                        this.norate = true;
+                    if (this.noclaim === undefined)
+                        this.noclaim = true;
+                });
+            }
             else
                 this.orders = { Items: [], Current: {} };
         }
