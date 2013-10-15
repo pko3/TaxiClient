@@ -88,15 +88,14 @@
         }
     },
 
-    sendclaim: function (data) {
+    sendclaim: function (data, callback) {
         if (data) {
             Service.callService("ClaimReport", data, function (d) {
-                this.orders.Current.noclaim = false;
-                this.orders.Current.claimDescription = data.Description;
+                Service.orders.Current.noclaim = false;
+                Service.orders.Current.claimDescription = data.Description;
                 Service.saveOrders();
-                callback(d);
-            }, function (d) {
-                errCalback(d);
+                if(callback)
+                    callback(d);
             });
         }
     },
@@ -109,16 +108,15 @@
         }
     },
 
-    sendrate: function (data) {
+    sendrate: function (data, callback) {
         if (data) {
             Service.callService("rate", data, function (d) {
-                this.orders.Current.norate = false;
-                this.orders.Current.rateValue = data.RateValue;
-                this.orders.Current.rateDescription = data.Description;
+                Service.orders.Current.norate = false;
+                Service.orders.Current.rateValue = data.RateValue;
+                Service.orders.Current.rateDescription = data.Description;
                 Service.saveOrders();
-                callback(d);
-            }, function (d) {
-                errCalback(d);
+                if (callback)
+                    callback(d);
             });
             
         }

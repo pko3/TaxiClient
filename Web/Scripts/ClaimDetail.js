@@ -13,7 +13,7 @@
     this.onShow = function () {
         var self = this;
         $("#claimback").click(function () { app.home(); });
-        $("#claimDetailSave").click(function () { sendClaim(); });
+        $("#claimDetailSave").click(function () { self.sendClaim(); });
 
         this.loadData();
     };
@@ -26,25 +26,20 @@
     this.sendClaim = function () {
         this.order = Service.orders.Current;
         var self = this;
-        var d = $("#claimDetailForm").serialize();
-        d.GUID_TransporterOrder = this.order.GUID;
-        d.UserPhone = this.order.CustomerPhone;
-        d.Status = "New";
+        var d = $("#claimDetailForm").serializeArray(), data = {};
+        $.each(d, function (i, v) { data[v.name] = v.value; });
+        data.GUID_TransporterOrder = this.order.GUID;
+        data.UserPhone = this.order.CustomerPhone;
+        data.Status = "New";
 
-        var send = function () {
-            Service.sendclaim(d, function (data) {
 
-                alert(order.claimDescription);
-
-            }, function (data) {
-
-            });
-        }
-
-        //back
-        app.home();
-
+        Service.sendclaim(data, function () { app.home(); });
+        
     }
+
+ 
+
+    
 
     this.initialize();
 }

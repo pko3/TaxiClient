@@ -31,22 +31,26 @@ var RateDetail = function () {
     {
         this.order = Service.orders.Current;
         var self = this;
-        var d = $("#ratedetailForm").serialize();
-        d.GUID_Entity = this.order.GUID;
-        d.Title_Entity = "TransporterOrder";
+        var d = $("#ratedetailForm").serializeArray(), data = {};
+        //serializeObject
+        $.each(d, function (i, v) { data[v.name] = v.value; });
 
-        var send = function () {
-            Service.sendrate(d, function (data) {
+        data.GUID_Entity = this.order.GUID;
+        data.Title_Entity = "TransporterOrder";
 
-                alert(order.rateValue + " " + order.rateDescription);
+        //var send = function () {
+        //    Service.sendrate(d, function (data) {
 
-            }, function (data) {
+        //        alert(order.rateValue + " " + order.rateDescription);
 
-            });
-        }
+        //    }, function (data) {
 
-        //back
-        app.home();
+        //        alert("error");
+        //    });
+        //}
+
+        Service.sendrate(data, function () { app.home(); });
+
 
     }
 }
