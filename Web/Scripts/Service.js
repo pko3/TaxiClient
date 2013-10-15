@@ -88,11 +88,16 @@
         }
     },
 
-    sendclaim: function (id) {
-        var order = this.findOrder(id);
-        if (order) {
-            this.orders.Current = order;
-
+    sendclaim: function (data) {
+        if (data) {
+            Service.callService("ClaimReport", data, function (d) {
+                this.orders.Current.noclaim = false;
+                this.orders.Current.claimDescription = data.Description;
+                Service.saveOrders();
+                callback(d);
+            }, function (d) {
+                errCalback(d);
+            });
         }
     },
 
@@ -104,19 +109,15 @@
         }
     },
 
-    sendrate: function (id) {
-        var order = this.findOrder(id);
-        if (order) {
-            this.orders.Current = order;
-            Service.callService("order", order, function (d) {
-                order.GUID = d.Id;
-                self.setOrderDescription(order);
+    sendrate: function (data) {
+        if (data) {
+            Service.callService("rate", data, function (d) {
+                this.orders.Current.norate = false;
+                this.orders.Current.rateValue = data.RateValue;
+                this.orders.Current.rateDescription = data.Description;
                 Service.saveOrders();
                 callback(d);
             }, function (d) {
-                order.Status = "";
-                self.setOrderDescription(order);
-                Service.saveOrders();
                 errCalback(d);
             });
             
@@ -311,9 +312,9 @@
 
 
                     if (this.Status == "") {
-                        if (this.norate === undefined)
+                        if (this.norate === undefined || this.norate === null)
                             this.norate = true;
-                        if (this.noclaim === undefined)
+                        if (this.noclaim === undefined || this.noclaim === null)
                             this.noclaim = true;
                     }
                     else {

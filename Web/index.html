@@ -139,9 +139,9 @@
 <script id="claimdetail-tpl" type="text/x-handlebars-template">
 <div class='header'>
     <button id="claimback" class="icon ico_back">&nbsp;</button>
-    <button id="claimDetailSave" class="icon texticon">Poslať reklamáciu&nbsp;</button>
+    <button id="claimDetailSave" class="icon texticon ico_submit">Poslať reklamáciu&nbsp;</button>
 </div>
-<div id="claimDetailForm"></div>
+<form id="claimDetailForm"></form>
 </script>
 <script id="claimdetailForm-tpl" type="text/x-handlebars-template">
         <div class="pad10">
@@ -156,7 +156,7 @@
         <strong>Tel:</strong> {{this.CustomerPhone}} <strong>Meno:</strong> {{this.CustomerName}}
     </div>
     <div>
-        <strong>Text:</strong> <textarea id ="claimDetail" maxlength="500"></textarea>
+        <strong>Text:</strong> <textarea id ="claimDetail" name="Description" maxlength="500"></textarea>
     </div>
 
 
@@ -173,9 +173,9 @@
 <script id="ratedetail-tpl" type="text/x-handlebars-template">
 <div class='header'>
     <button id="rateback" class="icon ico_back">&nbsp;</button>
-    <button id="rateDetailSave" class="icon texticon">Poslať hodnotenie&nbsp;</button>
+    <button id="rateDetailSave" class="icon texticon ico_submit">Poslať hodnotenie&nbsp;</button>
 </div>
-<div id="ratedetailForm"></div>
+<form id="ratedetailForm"></form>
 </script>
 <script id="ratedetailForm-tpl" type="text/x-handlebars-template">
     <div class="pad10">
@@ -189,10 +189,10 @@
         <strong>Tel:</strong> {{this.CustomerPhone}} <strong>Meno:</strong> {{this.CustomerName}}
     </div>
     <div>
-        <strong>Hodnotenie (1 hrozné - 10 výborné):</strong> <input id="rateValue" type="number" name="rateValue" value="{{this.rateValue}}" min="1" max="10" />
+        <strong>Hodnotenie (1 hrozné - 10 výborné):</strong> <input id="rateValue" type="number" name="RateValue" value="{{this.rateValue}}" min="1" max="10" />
     </div>
      <div>
-        <strong>Poznámka:</strong> <input id="rateDescription" type="text" name="rateDescription" value="{{this.rateDescription}}"  maxlength="500" />
+        <strong>Poznámka:</strong> <input id="rateDescription" type="text" name="Description" value="{{this.rateDescription}}"  maxlength="500" />
     </div>
 
     {{#if this.ErrorMessage}}

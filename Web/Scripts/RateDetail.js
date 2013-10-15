@@ -14,8 +14,9 @@ var RateDetail = function () {
     };
 
     this.onShow = function () {
+        var self = this;
         $("#rateback").click(function () { app.home(); });
-        $("#rateDetailSave").click(function () { sendRate(); });
+        $("#rateDetailSave").click(function () { self.sendRate(); });
         this.loadData();
     };
 
@@ -26,17 +27,18 @@ var RateDetail = function () {
 
     this.initialize();
 
-    sendRate = function ()
+    this.sendRate = function ()
     {
         this.order = Service.orders.Current;
         var self = this;
-        //var rateValue = $("#rateValue").value;
-        //var rateDescription = $("#rateDescription").value;
-
-        alert(order.rateValue + " " + order.rateDescription);
+        var d = $("#ratedetailForm").serialize();
+        d.GUID_Entity = this.order.GUID;
+        d.Title_Entity = "TransporterOrder";
 
         var send = function () {
-            Service.sendrate(self.order, function (data) {
+            Service.sendrate(d, function (data) {
+
+                alert(order.rateValue + " " + order.rateDescription);
 
             }, function (data) {
 

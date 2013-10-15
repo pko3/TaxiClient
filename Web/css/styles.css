@@ -43,16 +43,6 @@ body
 	font-size: 22px;
 }
 
-.texticon {
-    color: #fff;
-    width: auto;
-    height: auto;
-    background-color: #00FF00;
-    font-weight: bold;
-    line-height: normal;
-    background-repeat: repeat;
-}
-
 /*Free||Busy||WithCustomer||Offline*/
 #taxiHeader.Offline
 {
@@ -416,7 +406,7 @@ h2
 	bottom: 60px;
 	left: 0px;
 	overflow: hidden;
-    text-align:center;
+    /*text-align:center;*/
 }
 
 .scrollBottom
@@ -447,7 +437,7 @@ h2
 		display: inline-block;
 		margin: 0;
 		padding: 0 10px;
-		height: 44px;
+		height: 60px;
 		border: none;
 		background-color: transparent;
 		color: white;
@@ -500,7 +490,7 @@ h2
 	-webkit-transition-duration: .375s;
 }
 
-button.icon
+/*button.icon
 {
 	display: inline-block;
 	margin: 3px;
@@ -514,6 +504,42 @@ button.icon
 {
 	background-color: transparent;
 	background-repeat: no-repeat;
+}*/
+
+
+.icon
+{
+	display: inline-block;
+	margin: 3px;
+	width: 60px;
+	height: 60px;
+    border-style:none;
+    /*border: 2px solid white;*/
+    background-position: -10px -10px;
+	background-color: transparent;
+	background-repeat: no-repeat;
+}
+
+.textnoicon {
+    display: inline-block;
+    margin: 3px;
+    width: auto;
+    height: 60px;
+    /*border: 2px solid white;*/
+    background-position: -10px -10px;
+    background-color: transparent;
+    background-repeat: no-repeat;
+    color: #FFFFFF;
+    font-weight: bold;
+    font-size: x-large;
+}
+
+.texticon {
+    padding-right:65px;
+    padding-left:20px;
+    background-position:right;
+    color: #fff;
+    width:auto;
 }
 
 button.waitingIcon {
