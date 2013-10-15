@@ -87,6 +87,15 @@
             app.route("claim");
         }
     },
+
+    sendclaim: function (id) {
+        var order = this.findOrder(id);
+        if (order) {
+            this.orders.Current = order;
+
+        }
+    },
+
     rate: function (id) {
         var order = this.findOrder(id);
         if (order) {
@@ -94,6 +103,26 @@
             app.route("rate");
         }
     },
+
+    sendrate: function (id) {
+        var order = this.findOrder(id);
+        if (order) {
+            this.orders.Current = order;
+            Service.callService("order", order, function (d) {
+                order.GUID = d.Id;
+                self.setOrderDescription(order);
+                Service.saveOrders();
+                callback(d);
+            }, function (d) {
+                order.Status = "";
+                self.setOrderDescription(order);
+                Service.saveOrders();
+                errCalback(d);
+            });
+            
+        }
+    },
+
     showHelp: function (id) {
 
         alert('help');
@@ -271,6 +300,16 @@
             if (s) {
                 this.orders = JSON.parse(s);
                 $.each(this.orders.Items, function () {
+
+                    if (this.rateValue == undefined)
+                        this.rateValue = 5;
+                    if (this.rateDescription == undefined)
+                        this.rateDescription = "";
+                    if (this.claimDescription == undefined)
+                        this.claimDescription = "";
+
+
+
                     if (this.Status == "") {
                         if (this.norate === undefined)
                             this.norate = true;

@@ -1,6 +1,9 @@
 var RateDetail = function () {
 
+    this.rate = {}
+    this.order = {}
     this.index = 4;
+
     this.initialize = function () {
         this.el = $('<div/>');
     };
@@ -12,6 +15,7 @@ var RateDetail = function () {
 
     this.onShow = function () {
         $("#rateback").click(function () { app.home(); });
+        $("#rateDetailSave").click(function () { sendRate(); });
         this.loadData();
     };
 
@@ -21,6 +25,28 @@ var RateDetail = function () {
     };
 
     this.initialize();
+
+    sendRate = function ()
+    {
+        this.order = Service.orders.Current;
+        var self = this;
+        //var rateValue = $("#rateValue").value;
+        //var rateDescription = $("#rateDescription").value;
+
+        alert(order.rateValue + " " + order.rateDescription);
+
+        var send = function () {
+            Service.sendrate(self.order, function (data) {
+
+            }, function (data) {
+
+            });
+        }
+
+        //back
+        app.home();
+
+    }
 }
 
 

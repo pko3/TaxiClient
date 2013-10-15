@@ -64,7 +64,7 @@
 
         $('body').on('click', '[data-route]', function (event) { app.route($(this).attr("data-route")); });
         $('body').on('click', '#newOrder', function (event) { Service.newOrder(); });
-        $('body').on('click', '#appHelp', function (event) { Service.showHelp(); });
+        //$('body').on('click', '#appHelp', function (event) { Service.showHelp(); });
 
         if (navigator.app)
             $('body').on('click', '#appExit', function () { app.end(function () { app.home(); }); });
@@ -134,6 +134,8 @@
                 case "order": page = new OrderView().render(); break;
                 case "claim": page = new ClaimDetail().render(); break;
                 case "rate": page = new RateDetail().render(); break;
+                case "map": page = new MapView().render(); break;
+                case "help": page = new HelpView().render(); break;
 
                 default: this.showAlert("Undefined page:" + p, "ERROR"); return;
             }
@@ -218,9 +220,33 @@
         this.pages = {};
         this.registerEvents();
 
+        //check GPS:
+        app.checkGPS();
+
         Service.initialize(function () {
             self.home();
         });
+    },
+    checkGPS: function () {
+        //test GPS only if device 
+        if (!this.isDevice) return;
+        var show = false;
+        try {
+
+            navigator.geolocation.getCurrentPosition(null,
+                function () {
+                    show = true;
+                    app.showAlert("GPS nie je dostupne !", "Upozornenie")
+                }
+                , { enableHighAccuracy: true });
+        }
+        catch (err) {
+            if (!show) {
+                app.showAlert("GPS nie je dostupne!", "Upozornenie")
+            }
+        }
+        
+        
     }
 };
 
