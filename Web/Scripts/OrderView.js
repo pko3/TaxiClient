@@ -141,7 +141,7 @@
                     });
                 }
                 else send();
-
+                
                 return;
                 break;
             default://fTaxiCompany
@@ -169,6 +169,8 @@
             });
         }
         else self.showForm();
+
+        
     };
     this.showForm = function () {
             app.waiting(false);
