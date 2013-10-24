@@ -29,6 +29,7 @@ var ViewMap = {
     mapDiv: null,
     mess: null,
     messError: null,
+
     initialize: function (el) {
         var header = $('<div class="header"><button data-route="orders" class="icon ico_back">&nbsp;</button></div>').appendTo(el);
         var sc = $('<div class="scrollBottom"/>').appendTo(header);
@@ -40,6 +41,7 @@ var ViewMap = {
             ViewMap.message(ViewMap.mess, ViewMap.messError);
         }
     },
+
     success: function (position) {
         ViewMap.date = new Date().toTimeString();
         ViewMap.message("Pozícia " + ViewMap.date);

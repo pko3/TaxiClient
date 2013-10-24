@@ -80,8 +80,6 @@
 
         $('body').on('click', '[data-route]', function (event) { app.route($(this).attr("data-route")); });
         $('body').on('click', '#newOrder', function (event) { Service.newOrder(); });
-        //$('body').on('click', '#appHelp', function (event) { Service.showHelp(); });
-
         if (navigator.app)
             $('body').on('click', '#appExit', function () { app.end(function () { app.home(); }); });
         //deviceready
@@ -93,7 +91,6 @@
         //menubutton
         //searchbutton
         try {
-            //document.addEventListener("menubutton", function () { e.preventDefault(); app.settings(); }, false);
             document.addEventListener('backbutton', function (e) {
                 if (app.currentPage && app.currentPage.back)
                 {
@@ -239,32 +236,18 @@
         //check GPS:
         app.checkGPS();
 
+
         Service.initialize(function () {
             self.home();
         });
     },
-    checkGPS: function () {
-        //test GPS only if device 
-        if (!this.isDevice) return;
-        var show = false;
-        try {
 
-            navigator.geolocation.getCurrentPosition(null,
-                function () {
-                    show = true;
-                    app.showAlert("GPS nie je dostupne !", "Upozornenie")
-                }
-                , { enableHighAccuracy: true });
-        }
-        catch (err) {
-            if (!show) {
-                app.showAlert("GPS nie je dostupne!", "Upozornenie")
-            }
-        }
-        
-        
+    checkGPS: function () {
+        if (!this.isDevice) return;
     }
-};
+}
+
+
 
 function onLoad() {
     app.isDevice = navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry)/);
@@ -276,13 +259,13 @@ function onLoad() {
     
 }
 
-function fillEndCity() {
+function fillEndCity()
+{
     var endc = document.getElementById("EndCity");
     var startc = document.getElementById('StartCity');
     if (startc == null) return;
-    if (endc == null || endc.value == '')
+    if (endc == null || endc.value=='')
         endc.value = startc.value;
 
-
+    
 }
-

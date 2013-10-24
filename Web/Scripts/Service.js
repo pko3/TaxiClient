@@ -80,6 +80,8 @@
             app.route("detail");
         }
     },
+ 
+
     claim: function (id) {
         var order = this.findOrder(id);
         if (order) {
@@ -94,7 +96,7 @@
                 Service.orders.Current.noclaim = false;
                 Service.orders.Current.claimDescription = data.Description;
                 Service.saveOrders();
-                if(callback)
+                if (callback)
                     callback(d);
             });
         }
@@ -118,7 +120,7 @@
                 if (callback)
                     callback(d);
             });
-            
+
         }
     },
 
@@ -126,6 +128,7 @@
 
         alert('help');
     },
+
     newOrder: function (id) {
         var order = this.findOrder(id);
         if (order) {
@@ -135,7 +138,7 @@
             }
             else
                 order.IsNew = false;
-            
+
         }
         else {
             order = {};
@@ -159,6 +162,7 @@
         this.orders.Current = order;
         app.route("order");
     },
+
     isOrderInProcess: function(order){
         return order && order.Status && (order.Status == "New" || order.Status == "Offered" || order.Status == "Reserved" || order.Status == "Waiting");
     },
@@ -259,6 +263,7 @@
 
         if (order.CustomerPhone && this.settings.userPhone != order.CustomerPhone) {
             this.settings.userPhone = order.CustomerPhone;
+
             if (order.CustomerName && this.settings.userName != order.CustomerName) {
                 this.settings.userName = order.CustomerName;
 
@@ -293,8 +298,7 @@
         });
     },
     getOrders: function () {
-        if (!this.orders)
-        {
+        if (!this.orders) {
             var s = window.localStorage.getItem("orders");
             if (s) {
                 this.orders = JSON.parse(s);
@@ -326,6 +330,7 @@
         }
         return this.orders;
     },
+
     saveOrders: function () {
         window.localStorage.setItem("orders", JSON.stringify(this.orders));
         this.orders.IsChanged = false;
@@ -384,7 +389,10 @@
         }
         return this.companies;
     },
-    findCompany: function(id){
+    findCompany: function (id) {
+        if (this.companies.Items.length == 1)
+            return this.companies.Items[0];
+
         var r = $.grep(this.companies.Items, function (o) { return o.localId == id; });
         if (r.length > 0)
             return r[0];

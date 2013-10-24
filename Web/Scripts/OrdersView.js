@@ -43,12 +43,13 @@ var OrdersView = function () {
             app.playNew();
         g_OrdersCheckSum = c_OrdersCheckSum;
 
+
         app.waiting(false);
 
         $(".up").click(function () { self.changeOffer($(this).parent(), "Up"); });
         $(".down").click(function () { self.changeOffer($(this).parent(), "Down"); });
         $(".content").click(function () { self.detail($(this).parent()); });
-
+        
         $('.orders-list').show();
     };
     this.changeOffer = function (btn, action) {
@@ -67,6 +68,9 @@ var OrdersView = function () {
         var self = this;
         Service.detail(btn.attr("data_localId"));
     };
+
+
+
 
     this.onShow = function () {
         if (!navigator.app)

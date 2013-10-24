@@ -17,12 +17,13 @@ var OrderDetail = function () {
         $("#orderDetailClaim").click(function () { self.claim(); });
         $("#orderDetailRate").click(function () { self.rate(); });
         this.loadData();
+
     };
 
     this.loadData = function () {
         this.order = Service.orders.Current;
-
-        if (this.order.noclaim && this.order.GUID)
+        ////mhp nefunguje
+        if (this.order.noclaim && this.order.GUID) 
             $("#orderDetailClaim").show();
         else
             $("#orderDetailClaim").hide();
@@ -35,11 +36,13 @@ var OrderDetail = function () {
 
         $("#orderDetailForm").html(OrderDetail.detailTemplate(this.order));
         if (this.order.StartLatitude)
-            try{
+            try {
                 Map.setMap(this.order.StartLatitude, this.order.StartLongitude, this.order.TaxiLatitude, this.order.TaxiLongitude);
             } catch (err) {
                 Map.mapDiv.html("Mapy sú nedostupné");
+
             }
+
     };
 
     //ratung
@@ -51,6 +54,7 @@ var OrderDetail = function () {
     this.claim = function (btn) {
         Service.claim(Service.orders.Current.localId);
     };
+
 
     this.initialize();
 }
