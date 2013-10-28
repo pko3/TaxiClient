@@ -3,6 +3,7 @@
     connectionError: undefined,
     orders: undefined,
     companies: undefined,
+    oneCompany: false,
     settings: {
         userId: undefined,
         userPhone: undefined,
@@ -387,6 +388,9 @@
                 this.saveCompanies();
             }
         }
+
+        this.oneCompany = this.companies.Items.length < 2;
+
         return this.companies;
     },
     findCompany: function (id) {
