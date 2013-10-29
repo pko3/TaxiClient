@@ -127,7 +127,7 @@
 
     showHelp: function (id) {
 
-        alert('help');
+        
     },
 
     newOrder: function (id) {
@@ -176,7 +176,9 @@
             case "Reserved": order.StatusDescription = "Rezervovaná"; break;
             case "Waiting": order.StatusDescription = "Pristavené"; break;
             case "Cancel": order.StatusDescription = "Zrušená"; break;
-            default : order.StatusDescription = "Vybavená"; break;
+            case "Complete": order.StatusDescription = "Vybavená"; break;
+            case "Transport": order.StatusDescription = "Transport"; break;
+            default : order.StatusDescription = "Ukončená"; break;
         }
         //order.FormatedDate = Service.formatDate(order.OrderToDate);
     },
@@ -227,6 +229,8 @@
 
                 //mhp spz
                 this.SPZ = order.SPZ;
+                this.Title = order.Title;
+                this.Description = order.Description;
                 this.TimeToFree = order.TimeToFree;
 
                 if (order.Latitude && order.Longitude && (this.TaxiLatitude != order.Latitude || this.TaxiLongitude != order.Longitude))
