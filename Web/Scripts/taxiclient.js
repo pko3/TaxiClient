@@ -1,7 +1,8 @@
 ﻿var TaxiClient = {
-    ServiceUrl: "http://192.168.1.54/taxidFlexTest",
+    //ServiceUrl: "http://192.168.1.54/taxidFlexTest",
+    ServiceUrl: "http://62.168.68.178/taxidFlexTest",
     Companies: {
-        Version: 1,
+        Version: 2,
         Items:[
         { GUID_sysCompany: "2a6e8bd1-f425-4758-821c-de49f89d97e2", Title: "dFlex Nitra", Town: "Nitra" },
         { GUID_sysCompany: "2a6e8bd1-f425-4758-821c-de49f89d97e2", Title:"dFlex Nitra", Town:"Bratislava" },

@@ -173,7 +173,7 @@
         switch (order.Status) {
             case "New": order.StatusDescription = "Poslaná"; break;
             case "Offered": order.StatusDescription = "Ponúknutá"; break;
-            case "Reserved": order.StatusDescription = "Rezervovaná"; break;
+            case "Reserved": order.StatusDescription = "Spracovanie"; break;
             case "Waiting": order.StatusDescription = "Pristavené"; break;
             case "Cancel": order.StatusDescription = "Zrušená"; break;
             case "Complete": order.StatusDescription = "Vybavená"; break;
@@ -218,20 +218,35 @@
         $.each(this.orders.Items, function () {
             if (this.GUID == order.GUID) {
 
-                if (this.Status != order.StatusOrder) {
-                    self.orders.IsChanged = true;
-                    this.Status = order.StatusOrder;
-                    if (!self.isOrderInProcess(this))
-                        this.Status = "";
-                    else
-                        ret |= true;
-                }
-
                 //mhp spz
                 this.SPZ = order.SPZ;
                 this.Title = order.Title;
                 this.Description = order.Description;
                 this.TimeToFree = order.TimeToFree;
+                this.Message1 = order.Message1;
+                this.Message2 = order.Message2;
+
+                if (this.Status != order.StatusOrder) { //meni sa status ! 
+                    self.orders.IsChanged = true;
+                    this.Status = order.StatusOrder;
+                    if (!self.isOrderInProcess(this)) {
+                        this.Status = "";
+                        if(!this.Description) //ak nie je poznamka, vyplnime
+                            this.Description = constants.txt_ThankForUse;
+                    }
+                    else
+                        ret |= true;
+
+
+                }
+
+                //descr
+                if (this.Status == "Waiting") {
+                    if (!this.Description) //ak nie je poznamka, vyplnime
+                        this.Description = constants.txt_OrderWaiting;
+                }
+
+
 
                 if (order.Latitude && order.Longitude && (this.TaxiLatitude != order.Latitude || this.TaxiLongitude != order.Longitude))
                 {
