@@ -58,7 +58,7 @@
         <input type="hidden" id="TaxiCompanyLocalId" name="TaxiCompanyLocalId" value="{{this.TaxiCompanyLocalId}}"/>
     <div class="radiolist">
         {{#each this.companiesItems}}
-        <div data_localId="{{localId}}" class="radio{{#if selected}} selected{{/if}}">{{Title}} - {{Town}}</div>
+        <div data_localId="{{id}}" class="radio{{#if selected}} selected{{/if}}">{{Title}} - {{Town}}</div>
         {{/each}}
     </div>
     </fieldset>
@@ -272,7 +272,7 @@
 <script src="lib/handlebars.js"></script>
 <script src="lib/iscroll.js"></script>
 <script src="lib/mobiscroll.custom-2.6.2.min.js"></script>
-<!--<script src="http://app.datastream.sk/smartapps/taxiclient.js"></script>-->
+<script src="http://app.datastream.sk/smartapps/taxiclient.js"></script>
 <script src="Scripts/taxiclient.js"></script>
 <script src="Scripts/PositionService.js"></script>
 <script src="Scripts/Service.js"></script>

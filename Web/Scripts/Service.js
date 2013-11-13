@@ -45,34 +45,13 @@
             callback();
     },
     waitingOffers: function () {
+        //PKO - zgrupnut po TaxiCompanyLocalId
         var ret = [], self = this;
         $.each(this.orders.Items, function () {
             if (this.GUID && self.isOrderInProcess(this))
                 ret.push(this.GUID);
         });
         return ret;
-    },
-    login: function (callback) {
-        app.log("Service.login");
-        Service.isAuthenticated = false;
-        this.callService("login", { UserName: this.settings.name, Password: this.settings.password, RememberMe: true, TransporterId: this.settings.transporterId }, function (d) {
-            Service.isAuthenticated = true;
-            Service.settings.userId = d.userId;
-            Service.settings.sessionId = d.sessionId;
-            Service.saveSettings();
-            PositionService.startWatch();
-            if (callback) callback();
-
-        }, function (d) {
-            //PositionService.stopWatch();
-            if (d.ErrorMessage)
-                Service.connectionError = d.ErrorMessage;
-            else
-                Service.connectionError = "Chybné prihlásenie";
-            Service.isAuthenticated = false;
-            if (callback)
-                callback();
-        });
     },
     detail: function(id){
         var order = this.findOrder(id);
@@ -81,8 +60,6 @@
             app.route("detail");
         }
     },
- 
-
     claim: function (id) {
         var order = this.findOrder(id);
         if (order) {
@@ -90,7 +67,6 @@
             app.route("claim");
         }
     },
-
     sendclaim: function (data, callback) {
         if (data) {
             Service.callService("ClaimReport", data, function (d) {
@@ -275,11 +251,11 @@
 
         this.orders.Items.sort(function (a, b) {
             if (b.Date < a.Date)
-                    return -1;
+                return -1;
             if (b.Date > a.Date)
-                    return 1;
-                return 0;
-            });
+                return 1;
+            return 0;
+        });
 
         if (order.CustomerPhone && this.settings.userPhone != order.CustomerPhone) {
             this.settings.userPhone = order.CustomerPhone;
@@ -294,10 +270,11 @@
                 
         var company = this.findCompany(order.TaxiCompanyLocalId);
         order.TaxiCompany = company.GUID_sysCompany;
+        order.TaxiBranch = company.GUID_sysBranch;
         order.TaxiCompanyDescription = company.Title + " " + company.Town;
 
         $.each(this.companies.Items, function () {
-            this.selected = this.localId == company.localId;
+            this.selected = this.id == company.id;
         });
 
         Service.saveCompanies();
@@ -370,9 +347,6 @@
             else
                 Service.settings = {};
         }
-        if (TaxiClient) {
-            Service.settings.url = TaxiClient.ServiceUrl;
-        }
         return Service.settings;
     },
     saveSettings: function (data) {
@@ -394,14 +368,13 @@
                 
                 $.each(this.companies.Items, function () {
                     if (this.selected)
-                        selectedId = this.GUID_sysCompany + this.Town;
+                        selectedId = this.id;
                 });
 
                 this.companies = TaxiClient.Companies;
 
                 $.each(this.companies.Items, function () {
-                    this.localId = this.GUID_sysCompany + this.Town;
-                    this.selected = this.localId == selectedId;
+                    idthis.selected = this.id == selectedId;
                 });
 
                 this.saveCompanies();
@@ -416,7 +389,7 @@
         if (this.companies.Items.length == 1)
             return this.companies.Items[0];
 
-        var r = $.grep(this.companies.Items, function (o) { return o.localId == id; });
+        var r = $.grep(this.companies.Items, function (o) { return o.id == id; });
         if (r.length > 0)
             return r[0];
         return undefined;
@@ -426,8 +399,9 @@
     },
     callService: function (method, data, successDelegate, errorDelegate) {
         app.log("Service.callService: " + method);
+        var company = this.findCompany(data.TaxiCompanyLocalId);
         Service.connectionError = null;
-        if (!this.settings.url) {
+        if (!company || !company.ServiceUrl) {
             Service.connectionError = "Chýba adresa servisu";
             if (data)
                 data.ErrorMessage = Service.connectionError;
@@ -438,7 +412,7 @@
             if (data) {
                 data.UserTicket = this.settings.sessionId;
             }
-            $.post(this.settings.url + "/mobileclient/" + method, data)
+            $.post(company.ServiceUrl + "/mobileclient/" + method, data)
                 .done(function (d) {
                     if (d) {
                         app.log(method + ": OK");

@@ -206,7 +206,7 @@
                 this.order.companiesItems = Service.companies.Items;
                 $.each(Service.companies.Items, function () {
                     if (this.selected)
-                        self.order.TaxiCompanyLocalId = this.localId;
+                        self.order.TaxiCompanyLocalId = this.id;
 
                 });
             }

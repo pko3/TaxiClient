@@ -55,6 +55,7 @@
                     PositionService._lng = PositionService.lng;
                 }
 
+                //PKO - volat po TaxiCompanyLocalId
                 Service.callService("pool", {
                     list_IdOrder: list_IdOrder.join("||"),
                     Id: Service.settings.sessionId,
