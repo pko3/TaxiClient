@@ -37,6 +37,7 @@ var RateDetail = function () {
 
         data.GUID_Entity = this.order.GUID;
         data.Title_Entity = "TransporterOrder";
+        data.TaxiCompanyLocalId = this.order.TaxiCompanyLocalId;
 
         Service.sendrate(data, function () { app.home(); });
 

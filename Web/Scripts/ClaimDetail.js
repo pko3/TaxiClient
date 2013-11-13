@@ -31,7 +31,7 @@
         data.GUID_TransporterOrder = this.order.GUID;
         data.UserPhone = this.order.CustomerPhone;
         data.Status = "New";
-
+        data.TaxiCompanyLocalId = this.order.TaxiCompanyLocalId;
 
         Service.sendclaim(data, function () { app.home(); });
         

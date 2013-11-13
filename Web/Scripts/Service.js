@@ -47,9 +47,14 @@
     waitingOffers: function () {
         //PKO - zgrupnut po TaxiCompanyLocalId
         var ret = [], self = this;
-        $.each(this.orders.Items, function () {
-            if (this.GUID && self.isOrderInProcess(this))
-                ret.push(this.GUID);
+        $.each(self.companies.Items, function () {
+            var item = { id: this.id, items: [] };
+            $.each(self.orders.Items, function () {
+                if (this.GUID && this.TaxiCompanyLocalId == item.id && self.isOrderInProcess(this))
+                    item.items.push(this.GUID);
+            });
+            if (item.items.length > 0)
+                ret.push(item);
         });
         return ret;
     },
@@ -161,9 +166,9 @@
     removeOrder: function (id, callback) {
         var order = this.findOrder(id), self = this;
         if (order) {
-            if (order.Status != "" && order.GUID)
+            if (order.Status != "" && order.GUID && order.TaxiCompanyLocalId)
                 app.showConfirm("Chcete zrušiť objednávku?","Objednávka", function () {
-                    self.callService("OrderAction", { Action: "TaxiCustomerCancelOrder", GUID_TransporterOrder: order.GUID }, function () {
+                    self.callService("OrderAction", { Action: "TaxiCustomerCancelOrder", GUID_TransporterOrder: order.GUID, TaxiCompanyLocalId: order.TaxiCompanyLocalId }, function () {
                         $.each(self.orders.Items, function () {
                             self.setOrderDescription(this);
                         });
@@ -332,9 +337,6 @@
         window.localStorage.setItem("orders", JSON.stringify(this.orders));
         this.orders.IsChanged = false;
     },
-    getDetail: function (entity, id, callback) {
-        this.callService("itemmobile", { Id: entity + "_" + id }, callback, callback);
-    },
     getSettings: function () {
         if (!Service.settings || !Service.settings.sessionId) {
             var s = window.localStorage.getItem("settings");
@@ -374,7 +376,7 @@
                 this.companies = TaxiClient.Companies;
 
                 $.each(this.companies.Items, function () {
-                    idthis.selected = this.id == selectedId;
+                    this.selected = this.id == selectedId;
                 });
 
                 this.saveCompanies();

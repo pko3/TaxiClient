@@ -55,15 +55,21 @@
                     PositionService._lng = PositionService.lng;
                 }
 
+
                 //PKO - volat po TaxiCompanyLocalId
-                Service.callService("pool", {
-                    list_IdOrder: list_IdOrder.join("||"),
-                    Id: Service.settings.sessionId,
-                    Lat: posChanged ? PositionService.lat : 0,
-                    Lng: posChanged ? PositionService.lng : 0
-                },
-                function (d) { PositionService.startPool(); PositionService.refreshVersionData(d, list_IdOrder); },
-                function (d) { PositionService.startPool(); if (d.ErrorMessage) app.info(d.ErrorMessage); });
+                $.each(list_IdOrder, function () {
+                    var item = this;
+                    Service.callService("pool", {
+                        list_IdOrder: item.items.join("||"),
+                        TaxiCompanyLocalId: item.id,
+                        Id: Service.settings.sessionId,
+                        Lat: posChanged ? PositionService.lat : 0,
+                        Lng: posChanged ? PositionService.lng : 0
+                    },
+                    function (d) { PositionService.startPool(); PositionService.refreshVersionData(d, item.items); },
+                    function (d) { PositionService.startPool(); if (d.ErrorMessage) app.info(d.ErrorMessage); });
+                });
+
             }
             catch (err) {
                 PositionService.startPool();

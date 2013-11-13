@@ -273,7 +273,6 @@ function fillEndCity()
 
 function checkPersons() {
     var persons = $("#Persons").val();
-    alert(persons);
     if (persons > 7 || persons<1)
         $("#OrderFormError").html("Pocet osob!");
     else 
