@@ -269,6 +269,13 @@ function fillEndCity()
     if (startc == null) return;
     if (endc == null || endc.value=='')
         endc.value = startc.value;
+}
 
-    
+function checkPersons() {
+    var persons = $("#Persons").val();
+    alert(persons);
+    if (persons > 7 || persons<1)
+        $("#OrderFormError").html("Pocet osob!");
+    else 
+        $("#OrderFormError").html("");
 }

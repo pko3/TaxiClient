@@ -105,8 +105,8 @@
     <fieldset id="fSpecialConditions">
       <legend>Špeciálne požiadavky</legend>
       <div>
-        <label for="Persons">Počet pasažierov</label>
-        <input id="Persons" name="Persons" type="number" min="1" max="10" value="{{this.Persons}}" />
+        <label for="Persons">Počet pasažierov (1-7)</label>
+        <input id="Persons" name="Persons" type="number" min="1" max="7" onchange="checkPersons()" value="{{this.Persons}}" />
     </div>
     <div>
         <label for="SpecialConditions">Špeciálne požiadavky</label>

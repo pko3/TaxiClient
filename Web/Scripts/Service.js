@@ -99,7 +99,7 @@
                 Service.saveOrders();
                 if (callback)
                     callback(d);
-            });
+            }, function (d) { app.showAlert("Skúste opakovať neskôr", "Chyba pri vykonaní akcie"); });
         }
     },
 
@@ -120,7 +120,7 @@
                 Service.saveOrders();
                 if (callback)
                     callback(d);
-            });
+            },function (d) { app.showAlert("Skúste opakovať neskôr", "Chyba pri vykonaní akcie"); });
 
         }
     },

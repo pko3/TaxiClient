@@ -82,6 +82,7 @@
                 }
                 this.order.step = "fStartAddress";
                 break;
+
             case "fStartAddress":
                 if (!$("#StartCity").val() || !$("#StartAddress").val()) {
                     $("#OrderFormError").html("Zadajte kompletnú adresu");
@@ -89,9 +90,11 @@
                 }
                 this.order.step = "fEndAddress";
                 break;
+
             case "fEndAddress":
                 this.order.step = "fCustomerPhone";
                 break;
+
             case "fCustomerPhone":
                 if (!$("#CustomerPhone").val()) {
                     $("#OrderFormError").html("Zadajte Váš telefón");
@@ -103,7 +106,16 @@
                 }
                 this.order.step = "fSpecialConditions";
                 break;
+
             case "fSpecialConditions":
+
+                if ($("#Persons").val() < 1 && $("#Persons").val() >7)
+                {
+
+                    $("#OrderFormError").html("Počet osôb (1-7)");
+                    return;
+                }
+
                 this.order.step = "fOrderSave";
                 $("#orderSave").hide();
                 $("#orderBack").hide();
@@ -169,6 +181,7 @@
                 self.order.StartCity = a.City;
                 self.order.EndCity = a.City;
                 self.order.StartAddress = a.Address;
+                self.order.persons = 1;
                 self.order.geocodeStatus = a.Status;
                 self.order.StartLatitude = PositionService.lat;
                 self.order.StartLongitude = PositionService.lng;
@@ -177,6 +190,13 @@
         }
         else self.showForm();
     };
+
+    this.checkPersons = function ()
+    {
+        var persons = $("#Persons").val();
+        if(persons>7)
+            $("#OrderFormError").html("Pocet osob!");
+    }
 
     this.showForm = function () {
             app.waiting(false);
