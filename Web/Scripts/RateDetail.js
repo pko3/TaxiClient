@@ -9,14 +9,14 @@ var RateDetail = function () {
     };
 
     this.render = function() {
+        var self = this;
         this.el.html(RateDetail.template());
+        $("#rateback").click(function () { app.route("detail"); });
+        $("#rateDetailSave").click(function () { self.sendRate(); });
         return this;
     };
 
     this.onShow = function () {
-        var self = this;
-        $("#rateback").click(function () { app.route("detail"); });
-        $("#rateDetailSave").click(function () { self.sendRate(); });
         this.loadData();
     };
 
@@ -40,8 +40,6 @@ var RateDetail = function () {
         data.TaxiCompanyLocalId = this.order.TaxiCompanyLocalId;
 
         Service.sendrate(data, function () { app.home(); });
-
-
     }
 }
 

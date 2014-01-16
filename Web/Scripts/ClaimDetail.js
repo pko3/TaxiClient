@@ -7,14 +7,13 @@
 
     this.render = function() {
         this.el.html(ClaimDetail.template());
+        var self = this;
+        $("#claimback").click(function () { app.route("detail"); });
+        $("#claimDetailSave").click(function () { self.sendClaim(); });
         return this;
     };
 
     this.onShow = function () {
-        var self = this;
-        $("#claimback").click(function () { app.route("detail"); });
-        $("#claimDetailSave").click(function () { self.sendClaim(); });
-
         this.loadData();
     };
 

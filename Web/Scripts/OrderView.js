@@ -6,17 +6,14 @@
     };
 
     this.render = function() {
+        var self = this;
+        this.el.html(OrderView.template());
+        $("#orderSave").click(function () { if (!$(this).hasClass("transparent")) self.save(); });
+        $("#orderBack").click(function () { if (!$(this).hasClass("transparent")) self.back(); });
         return this;
     };
 
     this.onShow = function () {
-        var self = this;
-        this.el.html(OrderView.template());
-        $("#orderForm").hide();
-        app.waiting();
-        $("#orderSave").click(function () { if (!$(this).hasClass("transparent")) self.save(); });
-        $("#orderBack").click(function () { if (!$(this).hasClass("transparent")) self.back(); });
-                
         this.loadForm();
     };
     this.back = function () {
@@ -173,6 +170,9 @@
 
     this.loadForm = function () {
         var self = this;
+        $("#orderForm").hide();
+        app.waiting();
+
         this.order = Service.orders.Current;
         this.order.geocodeStatus = false;
         

@@ -6,18 +6,17 @@ var OrderDetail = function () {
     };
 
     this.render = function() {
-        this.el.html(OrderDetail.template());
-        return this;
-    };
-
-    this.onShow = function () {
         var self = this;
+        this.el.html(OrderDetail.template());
         Map.initialize($("#orderDetailMap"));
         $("#orderDetailBack").click(function () { app.home(); });
         $("#orderDetailClaim").click(function () { self.claim(); });
         $("#orderDetailRate").click(function () { self.rate(); });
-        this.loadData();
+        return this;
+    };
 
+    this.onShow = function () {
+        this.loadData();
     };
 
     this.loadData = function () {
